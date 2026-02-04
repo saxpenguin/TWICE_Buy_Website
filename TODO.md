@@ -2,7 +2,7 @@
 
 ## High Priority
 - [X] **[auth-1]** Set up Authentication Context and Hooks (useAuth) to manage user sessions
-- [ ] **[auth-2]** Implement Login and Sign Up pages (using Firebase Auth)
+- [X] **[auth-2]** Implement Login and Sign Up pages (using Firebase Auth)
 - [ ] **[prod-1]** Create Product Listing Page (/products) fetching data from Firestore
 - [ ] **[prod-2]** Create Product Details Page (/products/[id]) with "Pre-order" button
 - [ ] **[cart-1]** Implement Shopping Cart Context (add/remove items, calculate total)
