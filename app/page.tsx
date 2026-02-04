@@ -1,3 +1,6 @@
+import { MOCK_PRODUCTS } from '@/data/mock';
+import ProductCard from '@/components/ProductCard';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -36,6 +39,16 @@ export default function Home() {
             <p className="text-gray-600">
               Get access to exclusive TWICE merchandise not available in your region
             </p>
+          </div>
+        </div>
+
+        {/* Latest Merchandise */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest Merchandise</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {MOCK_PRODUCTS.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
         </div>
 

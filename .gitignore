@@ -39,6 +39,3 @@ next-env.d.ts
 
 # firebase
 .firebase
-
-# opencode
-AGENTS.md
