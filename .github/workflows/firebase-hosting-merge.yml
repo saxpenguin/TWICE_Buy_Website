@@ -19,4 +19,4 @@ jobs:
           channelId: live
           projectId: twice-buywebsite
         env:
-          FIREBASE_CLI_EXPERIMENTAL: webframeworks
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
