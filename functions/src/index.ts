@@ -44,10 +44,11 @@ export const calculateShippingCost = functions.https.onCall(async (data, context
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
 
-  const { orderId, weight, destination } = data;
+  const { orderId, weight } = data;
 
   // Example shipping calculation logic
   // In production, this would integrate with actual shipping APIs
+  // and consider destination for international rates
   const baseRate = 10; // Base shipping cost
   const weightRate = 2; // Per kg rate
   const shippingCost = baseRate + (weight * weightRate);
