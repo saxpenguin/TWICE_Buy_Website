@@ -5,8 +5,8 @@
 - [X] **[auth-2]** Implement Login and Sign Up pages (using Firebase Auth)
 - [X] **[prod-1]** Create Product Listing Page (/products) fetching data from Firestore
 - [X] **[prod-2]** Create Product Details Page (/products/[id]) with "Pre-order" button
-- [ ] **[cart-1]** Implement Shopping Cart Context (add/remove items, calculate total)
-- [ ] **[cart-2]** Create Cart Page (/cart) to review items before checkout
+- [X] **[cart-1]** Implement Shopping Cart Context (add/remove items, calculate total)
+- [X] **[cart-2]** Create Cart Page (/cart) to review items before checkout
 - [ ] **[checkout-1]** Create Checkout Page to collect Shipping Address and Receiver Info
 - [ ] **[order-1]** Implement "Create Order" functionality (Stage 1: Product Cost)
 - [ ] **[pay-1]** Integrate 3rd-party Payment Gateway (ECPay/NewebPay) API in Cloud Functions
