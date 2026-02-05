@@ -25,10 +25,10 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
 
 ## Phase 2: Admin Foundation & Product Management
 **Goal:** Allow admins to manage the product catalog and view the dashboard.
-- [ ] **Task 2.1:** Admin Layout & Security (`app/admin/layout.tsx`)
+- [X] **Task 2.1:** Admin Layout & Security (`app/admin/layout.tsx`)
     - Implement a layout that checks `user.role === 'ADMIN'`.
     - Redirect unauthorized users to `/`.
-- [ ] **Task 2.2:** Product List Dashboard (`app/admin/products/page.tsx`)
+- [X] **Task 2.2:** Product List Dashboard (`app/admin/products/page.tsx`)
     - Table view of all products (including CLOSED).
     - Actions: Delete, Toggle Status.
 - [ ] **Task 2.3:** Add Product Form (`app/admin/products/add/page.tsx`)
