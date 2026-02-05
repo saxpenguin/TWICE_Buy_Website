@@ -8,8 +8,10 @@ import { ShippingInfo } from '@/types';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { createOrder } from '@/lib/orderService';
+
 export default function CheckoutPage() {
-  const { items, totalPriceStage1, totalItems } = useCart();
+  const { items, totalPriceStage1, totalItems, clearCart } = useCart();
   const { user, profile, loading } = useAuth();
   const router = useRouter();
   
@@ -52,17 +54,36 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+    
     setIsSubmitting(true);
     
-    // TODO: Handle order creation logic in next step
-    // For now, we will simulate a delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Checkout Form Data:', formData);
-    console.log('Cart Items:', items);
-    
-    // alert('Proceeding to payment... (Mock)');
-    setIsSubmitting(false);
+    try {
+      // 1. Create Order
+      const orderId = await createOrder(
+        user.uid,
+        user.email || '',
+        items,
+        totalPriceStage1,
+        formData
+      );
+      
+      console.log('Order created:', orderId);
+      
+      // 2. Clear Cart
+      clearCart();
+      
+      // 3. Redirect to Payment (or Success page for now)
+      // Since payment gateway isn't integrated yet, we go to an order success/details page
+      // Ideally: router.push(`/payment/${orderId}`);
+      router.push(`/orders/${orderId}`);
+      
+    } catch (error) {
+      console.error('Failed to create order:', error);
+      alert('Failed to create order. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loading) {

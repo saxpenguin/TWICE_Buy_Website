@@ -7,8 +7,8 @@
 - [X] **[prod-2]** Create Product Details Page (/products/[id]) with "Pre-order" button
 - [X] **[cart-1]** Implement Shopping Cart Context (add/remove items, calculate total)
 - [X] **[cart-2]** Create Cart Page (/cart) to review items before checkout
-- [ ] **[checkout-1]** Create Checkout Page to collect Shipping Address and Receiver Info
-- [ ] **[order-1]** Implement "Create Order" functionality (Stage 1: Product Cost)
+- [X] **[checkout-1]** Create Checkout Page to collect Shipping Address and Receiver Info
+- [X] **[order-1]** Implement "Create Order" functionality (Stage 1: Product Cost)
 - [ ] **[pay-1]** Integrate 3rd-party Payment Gateway (ECPay/NewebPay) API in Cloud Functions
 - [ ] **[pay-2]** Handle Payment Callback (Webhook) to auto-update order status to PAID
 - [ ] **[order-2]** Create "My Orders" Dashboard (/orders) to view order status and history

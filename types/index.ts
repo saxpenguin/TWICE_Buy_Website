@@ -55,6 +55,10 @@ export interface Order {
   total_stage2: number;   // 國際運費 + 國內運費 (初始為 0)
   
   status: OrderStatus;
+
+  // Track payment status roughly
+  stage1_paid: boolean;
+  stage2_paid: boolean;
   
   // 新增：付款詳情 (由後端 webhook 更新)
   paymentInfo?: {
