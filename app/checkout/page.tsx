@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { createOrder } from '@/lib/orderService';
 
 export default function CheckoutPage() {
-  const { items, totalPriceStage1, totalItems, clearCart } = useCart();
+  const { items, totalPriceStage1, totalItems, clearCart, isInitialized } = useCart();
   const { user, profile, loading } = useAuth();
   const router = useRouter();
   
@@ -33,10 +33,11 @@ export default function CheckoutPage() {
 
   // Redirect if cart is empty
   useEffect(() => {
-    if (items.length === 0) {
+    // Wait for cart to be initialized before checking if empty
+    if (isInitialized && items.length === 0 && !isSubmitting) {
       router.push('/cart');
     }
-  }, [items, router]);
+  }, [items, router, isSubmitting, isInitialized]);
 
   // Redirect if not logged in
   useEffect(() => {

@@ -11,6 +11,7 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPriceStage1: number;
+  isInitialized: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -23,15 +24,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart));
-      } catch (error) {
-        console.error('Failed to parse cart from localStorage:', error);
+    // Check if we're in the browser to avoid SSR mismatch
+    if (typeof window !== 'undefined') {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      if (savedCart) {
+        try {
+          setItems(JSON.parse(savedCart));
+        } catch (error) {
+          console.error('Failed to parse cart from localStorage:', error);
+        }
       }
+      setIsInitialized(true);
     }
-    setIsInitialized(true);
   }, []);
 
   // Save cart to localStorage whenever it changes
@@ -102,6 +106,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         totalItems,
         totalPriceStage1,
+        isInitialized,
       }}
     >
       {children}
