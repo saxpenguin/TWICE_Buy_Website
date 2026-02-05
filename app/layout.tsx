@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { CartProvider } from "@/lib/context/CartContext";
 
 export const metadata: Metadata = {
   title: "TWICE Proxy - K-pop Merchandise Buying Service",
@@ -18,8 +19,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <Navbar />
-          <main>{children}</main>
+          <CartProvider>
+            <Navbar />
+            <main>{children}</main>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

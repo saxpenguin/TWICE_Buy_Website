@@ -1,9 +1,13 @@
+'use client';
+
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Product } from '@/types';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from '@/lib/context/CartContext';
+import { useEffect, useState } from 'react';
 
 // Force dynamic rendering since we depend on params and live data
 export const dynamic = 'force-dynamic';
@@ -27,13 +31,38 @@ async function getProduct(id: string): Promise<Product | null> {
   }
 }
 
-export default async function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params;
-  const product = await getProduct(resolvedParams.id);
+export default function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+
+  useEffect(() => {
+    async function loadProduct() {
+      const resolvedParams = await params;
+      const fetchedProduct = await getProduct(resolvedParams.id);
+      if (fetchedProduct) {
+        setProduct(fetchedProduct);
+      } else {
+        // Handle not found appropriately in client component
+        // For now, we set product to null which will show loading or error
+      }
+      setLoading(false);
+    }
+    loadProduct();
+  }, [params]);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   if (!product) {
     notFound();
   }
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    // Optional: Add toast notification
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -135,7 +164,10 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
 
               <div className="flex flex-col space-y-4">
                  {product.status !== 'CLOSED' ? (
-                   <button className="w-full bg-gray-900 text-white text-lg font-semibold py-4 px-8 rounded-lg hover:bg-gray-800 transition-colors shadow-md hover:shadow-lg transform active:scale-[0.98] transition-transform">
+                   <button 
+                     onClick={handleAddToCart}
+                     className="w-full bg-gray-900 text-white text-lg font-semibold py-4 px-8 rounded-lg hover:bg-gray-800 transition-colors shadow-md hover:shadow-lg transform active:scale-[0.98] transition-transform"
+                   >
                      {product.status === 'PREORDER' ? 'Pre-order Now' : 'Add to Cart'}
                    </button>
                  ) : (

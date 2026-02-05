@@ -1,14 +1,23 @@
+'use client';
+
 import React from 'react';
 import { Product } from '@/types';
 import Image from 'next/image';
-
 import Link from 'next/link';
+import { useCart } from '@/lib/context/CartContext';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    // Optional: Add toast or visual feedback here
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative h-64 w-full bg-gray-200">
@@ -56,8 +65,16 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        <button className="mt-4 w-full bg-gray-900 text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors">
-          Add to Cart
+        <button 
+          onClick={handleAddToCart}
+          disabled={product.status === 'CLOSED'}
+          className={`mt-4 w-full py-2 px-4 rounded transition-colors ${
+            product.status === 'CLOSED'
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-gray-900 text-white hover:bg-gray-800'
+          }`}
+        >
+          {product.status === 'CLOSED' ? 'Closed' : 'Add to Cart'}
         </button>
       </div>
     </div>
