@@ -2,6 +2,8 @@ import React from 'react';
 import { Product } from '@/types';
 import Image from 'next/image';
 
+import Link from 'next/link';
+
 interface ProductCardProps {
   product: Product;
 }
@@ -32,7 +34,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 min-h-[3.5rem]">
-          {product.name}
+          <Link href={`/products/${product.id}`} className="hover:text-pink-600 transition-colors">
+            {product.name}
+          </Link>
         </h3>
         
         <div className="mt-4 flex items-end justify-between">

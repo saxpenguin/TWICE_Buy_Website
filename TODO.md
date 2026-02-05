@@ -4,7 +4,7 @@
 - [X] **[auth-1]** Set up Authentication Context and Hooks (useAuth) to manage user sessions
 - [X] **[auth-2]** Implement Login and Sign Up pages (using Firebase Auth)
 - [X] **[prod-1]** Create Product Listing Page (/products) fetching data from Firestore
-- [ ] **[prod-2]** Create Product Details Page (/products/[id]) with "Pre-order" button
+- [X] **[prod-2]** Create Product Details Page (/products/[id]) with "Pre-order" button
 - [ ] **[cart-1]** Implement Shopping Cart Context (add/remove items, calculate total)
 - [ ] **[cart-2]** Create Cart Page (/cart) to review items before checkout
 - [ ] **[checkout-1]** Create Checkout Page to collect Shipping Address and Receiver Info
