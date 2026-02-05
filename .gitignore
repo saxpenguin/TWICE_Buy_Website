@@ -39,3 +39,6 @@ next-env.d.ts
 
 # firebase
 .firebase
+
+# opencode
+opencode.json
