@@ -3,7 +3,7 @@
 ## High Priority
 - [X] **[auth-1]** Set up Authentication Context and Hooks (useAuth) to manage user sessions
 - [X] **[auth-2]** Implement Login and Sign Up pages (using Firebase Auth)
-- [ ] **[prod-1]** Create Product Listing Page (/products) fetching data from Firestore
+- [X] **[prod-1]** Create Product Listing Page (/products) fetching data from Firestore
 - [ ] **[prod-2]** Create Product Details Page (/products/[id]) with "Pre-order" button
 - [ ] **[cart-1]** Implement Shopping Cart Context (add/remove items, calculate total)
 - [ ] **[cart-2]** Create Cart Page (/cart) to review items before checkout
@@ -22,3 +22,26 @@
 - [ ] **[notify-2]** Set up Email notification for "Stage 2 Payment Required" (Arrival notification)
 - [ ] **[static-1]** Create "Terms of Service" & "FAQ" pages (Must cover: refund policy, shipping risks)
 - [ ] **[backend-1]** Enhance Cloud Functions for secure payment processing (integration placeholder)
+
+## Admin Product Management (Phased Implementation)
+
+### Phase 1: Foundation & Routing
+- [ ] Create Admin Route: Set up the directory `app/admin/products/page.tsx` for the main dashboard.
+- [ ] Design Management UI: Implement a Table or Grid view to display product details (Name, Price, Status, ID).
+- [ ] Navigation: Add a "Create New Product" button that links to `/admin/products/add`.
+
+### Phase 2: Core CRUD Functionality
+- [ ] Implement "Delete": Add a delete button to each product row. Use `deleteDoc` from Firestore with a `window.confirm()` guard.
+- [ ] Implement "Update/Toggle Status": Create a toggle to switch product status between ACTIVE and CLOSED using `updateDoc`.
+- [ ] Create "Add Product" Form: Build a form at `app/admin/products/add/page.tsx`. Include input fields for name (string), price (number), status (select), and imageUrl (string).
+
+### Phase 3: Security & Access Control (Crucial)
+- [ ] Authentication (Auth): Integrate Firebase Auth to ensure only logged-in users can see the `/admin` path.
+- [ ] Admin Role Verification: Check the user's UID or Email to restrict access to authorized admins only.
+- [ ] Firestore Security Rules: Update rules in the Firebase Console to allow write operations only for authenticated admins.
+- [ ] Middleware: Set up Next.js Middleware to redirect unauthorized users away from `/admin`.
+
+### Phase 4: UX & Polish
+- [ ] Loading States: Add a Spinner or Skeleton screen while fetching or updating data.
+- [ ] Toast Notifications: Implement "Success" or "Error" popups after administrative actions.
+- [ ] Data Revalidation: Use `router.refresh()` or `revalidatePath` to ensure the UI stays in sync with the database.
