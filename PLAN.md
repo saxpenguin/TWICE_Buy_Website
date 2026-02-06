@@ -42,7 +42,7 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
     - View user details and history.
     - Manage user roles (Admin/User).
 
-- [ ] **Task 2.6:** Admin Dashboard Overview (`app/admin/page.tsx`)
+- [X] **Task 2.6:** Admin Dashboard Overview (`app/admin/page.tsx`)
     - Display key metrics (Total Orders, Total Revenue, Pending Shipments).
     - Recent Activity feed.
     - Quick links to manage products and orders.
