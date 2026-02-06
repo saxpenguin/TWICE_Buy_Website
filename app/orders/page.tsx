@@ -76,11 +76,25 @@ export default function OrdersPage() {
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'PENDING_PAYMENT_1': return '待付第一階段款項';
+      case 'PAID_PAYMENT_1': return '已付第一階段款項';
+      case 'ARRIVED_TW': return '已抵台 (計算運費中)';
+      case 'PENDING_PAYMENT_2': return '待付二補運費';
+      case 'PAID_PAYMENT_2': return '已付二補運費';
+      case 'SHIPPED': return '已出貨';
+      case 'COMPLETED': return '訂單完成';
+      case 'CANCELLED': return '已取消';
+      default: return status;
+    }
+  };
+
   const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString('en-US', {
+    return new Date(timestamp).toLocaleDateString('zh-TW', {
       year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
       hour: '2-digit',
       minute: '2-digit'
     });
@@ -97,7 +111,7 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">My Orders</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">我的訂單</h1>
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-8">
@@ -125,14 +139,14 @@ export default function OrdersPage() {
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No orders yet</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by browsing our products.</p>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">目前沒有訂單</h3>
+            <p className="mt-1 text-sm text-gray-500">快去選購喜歡的商品吧！</p>
             <div className="mt-6">
               <Link
                 href="/products"
                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
               >
-                Browse Products
+                瀏覽商品
               </Link>
             </div>
           </div>
@@ -146,7 +160,7 @@ export default function OrdersPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col">
                            <p className="text-sm font-medium text-pink-600 truncate">
-                             Order #{order.id.slice(0, 8).toUpperCase()}...
+                             訂單編號 #{order.id.slice(0, 8).toUpperCase()}...
                            </p>
                            <p className="text-xs text-gray-500 mt-1">
                              {formatDate(order.createdAt)}
@@ -154,18 +168,18 @@ export default function OrdersPage() {
                         </div>
                         <div className="ml-2 flex-shrink-0 flex">
                           <p className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusColor(order.status)}`}>
-                            {order.status.replace(/_/g, ' ')}
+                            {getStatusText(order.status)}
                           </p>
                         </div>
                       </div>
                       <div className="mt-2 sm:flex sm:justify-between">
                         <div className="sm:flex">
                           <p className="flex items-center text-sm text-gray-500">
-                             {order.items.length} Item{order.items.length > 1 ? 's' : ''}
+                             共 {order.items.length} 件商品
                           </p>
                           <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
-                            Total: NT$ {order.total_stage1.toLocaleString()} 
-                            {order.total_stage2 > 0 && ` + NT$ ${order.total_stage2.toLocaleString()} (Shipping)`}
+                            總計: NT$ {order.total_stage1.toLocaleString()} 
+                            {order.total_stage2 > 0 && ` + NT$ ${order.total_stage2.toLocaleString()} (運費)`}
                           </p>
                         </div>
                         <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
