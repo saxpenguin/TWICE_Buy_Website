@@ -105,10 +105,10 @@ export const createPaymentRequest = functions.https.onCall(async (data, context)
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
 
-  const { orderId, stage } = data; // stage: '1' or '2'
+  const { orderId } = data; // stage removed
 
-  if (!orderId || !stage) {
-    throw new functions.https.HttpsError('invalid-argument', 'Missing orderId or stage');
+  if (!orderId) {
+    throw new functions.https.HttpsError('invalid-argument', 'Missing orderId');
   }
 
   const orderRef = admin.firestore().collection('orders').doc(orderId);
@@ -129,30 +129,17 @@ export const createPaymentRequest = functions.https.onCall(async (data, context)
   let amount = 0;
   let itemName = '';
   
-  if (stage === '1') {
-    if (order?.stage1_paid) {
-      throw new functions.https.HttpsError('failed-precondition', 'Stage 1 already paid');
-    }
-    amount = order?.total_stage1;
-    itemName = `PingPing Shop - Order ${orderId.slice(0, 8)} (Stage 1)`;
-  } else if (stage === '2') {
-    if (order?.stage2_paid) {
-      throw new functions.https.HttpsError('failed-precondition', 'Stage 2 already paid');
-    }
-    if (!order?.total_stage2 || order.total_stage2 <= 0) {
-      throw new functions.https.HttpsError('failed-precondition', 'Stage 2 shipping fee not yet calculated');
-    }
-    amount = order?.total_stage2;
-    itemName = `PingPing Shop - Order ${orderId.slice(0, 8)} (Stage 2 Shipping)`;
-  } else {
-     throw new functions.https.HttpsError('invalid-argument', 'Invalid stage');
+  if (order?.isPaid) {
+    throw new functions.https.HttpsError('failed-precondition', 'Order already paid');
   }
+  amount = order?.totalAmount;
+  itemName = `PingPing Shop - Order ${orderId.slice(0, 8)}`;
 
   // 3. Generate Payment Parameters
   // Ensure MerchantTradeNo is unique and under 20 chars.
-  // We use the first 6 chars of OrderID, the stage, and a hex timestamp to stay within the limit.
-  // Date.now() is 13 chars, but Date.now().toString(16) is ~11 chars. 6 + 1 + 11 = 18 chars.
-  const merchantTradeNo = `${orderId.substring(0, 6)}${stage}${Date.now().toString(16)}`;
+  // We use the first 6 chars of OrderID and a hex timestamp to stay within the limit.
+  // Date.now() is 13 chars, but Date.now().toString(16) is ~11 chars. 6 + 11 = 17 chars.
+  const merchantTradeNo = `${orderId.substring(0, 6)}${Date.now().toString(16)}`;
   const merchantTradeDate = new Date().toLocaleString('zh-TW', { 
     hour12: false, 
     year: 'numeric', 
@@ -176,7 +163,6 @@ export const createPaymentRequest = functions.https.onCall(async (data, context)
     ChoosePayment: "ALL",
     EncryptType: "1",
     CustomField1: orderId,
-    CustomField2: stage, 
   };
 
   // 4. Calculate CheckMacValue
@@ -211,8 +197,8 @@ export const onOrderCreated = functions.firestore
       <h1>Order Received!</h1>
       <p>Thank you for your order with PingPing Shop.</p>
       <p><strong>Order ID:</strong> ${orderId}</p>
-      <p><strong>Status:</strong> Pending Stage 1 Payment</p>
-      <p>Please log in to your account to complete the Stage 1 payment so we can secure your items.</p>
+      <p><strong>Status:</strong> Pending Payment</p>
+      <p>Please log in to your account to complete the payment so we can secure your items.</p>
       <a href="https://pingping-goods.com/orders/${orderId}">View Order</a>
     `;
 
@@ -220,7 +206,7 @@ export const onOrderCreated = functions.firestore
   });
 
 /**
- * Trigger: When order status changes to PENDING_PAYMENT_2 (Shipping Fee Calculated), notify user.
+ * Trigger: When order status changes to SHIPPED, notify user.
  */
 export const onOrderStatusChange = functions.firestore
   .document('orders/{orderId}')
@@ -229,24 +215,6 @@ export const onOrderStatusChange = functions.firestore
     const oldData = change.before.data();
     const orderId = context.params.orderId;
     const email = newData.userEmail;
-
-
-    // Check if status changed to PENDING_PAYMENT_2
-    if (oldData.status !== 'PENDING_PAYMENT_2' && newData.status === 'PENDING_PAYMENT_2') {
-       if (!email) return;
-
-       const subject = `Action Required: Shipping Payment for Order ${orderId}`;
-       const body = `
-         <h1>Items Arrived at Warehouse</h1>
-         <p>Good news! Your items for Order <strong>${orderId}</strong> have arrived at our warehouse.</p>
-         <p>The international and domestic shipping fees have been calculated.</p>
-         <p><strong>Total Shipping (Stage 2):</strong> $${newData.total_stage2}</p>
-         <p>Please log in to pay the shipping fee so we can dispatch your package.</p>
-         <a href="https://pingping-goods.com/orders/${orderId}">Pay Shipping Now</a>
-       `;
-       
-       return sendOrderEmail(email, subject, body);
-    }
     
     // Check if status changed to SHIPPED
     if (oldData.status !== 'SHIPPED' && newData.status === 'SHIPPED') {
@@ -294,28 +262,20 @@ export const paymentCallback = functions.https.onRequest(async (req, res) => {
   
   const rtnCode = data.RtnCode; // '1' means success
   const orderId = data.CustomField1;
-  const stage = data.CustomField2;
 
-  if (rtnCode === '1' && orderId && stage) {
+  if (rtnCode === '1' && orderId) {
     try {
       const orderRef = admin.firestore().collection('orders').doc(orderId);
       
       const updateData: any = {
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        isPaid: true,
+        paidAt: admin.firestore.FieldValue.serverTimestamp(),
+        status: 'PAID',
       };
 
-      if (stage === '1') {
-        updateData.stage1_paid = true;
-        updateData.paidAt_stage1 = admin.firestore.FieldValue.serverTimestamp();
-        updateData.status = 'PAID_PAYMENT_1'; 
-      } else if (stage === '2') {
-        updateData.stage2_paid = true;
-        updateData.paidAt_stage2 = admin.firestore.FieldValue.serverTimestamp();
-        updateData.status = 'PAID_PAYMENT_2'; 
-      }
-
       await orderRef.update(updateData);
-      console.log(`Payment successful for Order ${orderId} Stage ${stage}`);
+      console.log(`Payment successful for Order ${orderId}`);
 
       // Send Email Notification
       try {
@@ -329,23 +289,13 @@ export const paymentCallback = functions.https.onRequest(async (req, res) => {
            let subject = '';
            let body = '';
 
-           if (stage === '1') {
-             subject = `Payment Received: Order ${orderId} (Stage 1)`;
-             body = `
-               <h1>Payment Received</h1>
-               <p>Thank you! We have received your payment for the product cost (Stage 1).</p>
-               <p><strong>Order ID:</strong> ${orderId}</p>
-               <p>We will now purchase your items. You will be notified when they arrive at our warehouse for the Stage 2 shipping payment.</p>
-             `;
-           } else if (stage === '2') {
-             subject = `Payment Received: Order ${orderId} (Stage 2)`;
-             body = `
-               <h1>Shipping Payment Received</h1>
-               <p>Thank you! We have received your payment for shipping (Stage 2).</p>
-               <p><strong>Order ID:</strong> ${orderId}</p>
-               <p>Your items will be shipped shortly!</p>
-             `;
-           }
+           subject = `Payment Received: Order ${orderId}`;
+           body = `
+             <h1>Payment Received</h1>
+             <p>Thank you! We have received your payment.</p>
+             <p><strong>Order ID:</strong> ${orderId}</p>
+             <p>We will now process your order.</p>
+           `;
            
            await sendOrderEmail(email, subject, body);
         }
@@ -365,4 +315,5 @@ export const paymentCallback = functions.https.onRequest(async (req, res) => {
     res.status(400).send('0|Fail');
   }
 });
+
 

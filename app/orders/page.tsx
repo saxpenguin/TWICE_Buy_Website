@@ -55,16 +55,10 @@ export default function OrdersPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING_PAYMENT_1':
+      case 'PENDING_PAYMENT':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'PAID_PAYMENT_1':
+      case 'PAID':
         return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'ARRIVED_TW':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      case 'PENDING_PAYMENT_2':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'PAID_PAYMENT_2':
-        return 'bg-teal-100 text-teal-800 border-teal-200';
       case 'SHIPPED':
         return 'bg-purple-100 text-purple-800 border-purple-200';
       case 'COMPLETED':
@@ -78,11 +72,8 @@ export default function OrdersPage() {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'PENDING_PAYMENT_1': return '待付第一階段款項';
-      case 'PAID_PAYMENT_1': return '已付第一階段款項';
-      case 'ARRIVED_TW': return '已抵台 (計算運費中)';
-      case 'PENDING_PAYMENT_2': return '待付二補運費';
-      case 'PAID_PAYMENT_2': return '已付二補運費';
+      case 'PENDING_PAYMENT': return '待付款';
+      case 'PAID': return '已付款';
       case 'SHIPPED': return '已出貨';
       case 'COMPLETED': return '訂單完成';
       case 'CANCELLED': return '已取消';
@@ -178,8 +169,7 @@ export default function OrdersPage() {
                              共 {order.items.length} 件商品
                           </p>
                           <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
-                            總計: NT$ {order.total_stage1.toLocaleString()} 
-                            {order.total_stage2 > 0 && ` + NT$ ${order.total_stage2.toLocaleString()} (運費)`}
+                            總計: NT$ {order.totalAmount.toLocaleString()} 
                           </p>
                         </div>
                         <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">

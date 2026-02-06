@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function CartPage() {
-  const { items, removeFromCart, updateQuantity, totalPriceStage1, clearCart } = useCart();
+  const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
 
   if (items.length === 0) {
     return (
@@ -64,7 +64,7 @@ export default function CartPage() {
                           </Link>
                         </h3>
                         <p className="ml-4 text-lg font-bold text-gray-900">
-                          NT$ {(item.price_stage1 * item.quantity).toLocaleString()}
+                          NT$ {(item.price * item.quantity).toLocaleString()}
                         </p>
                       </div>
                       
@@ -118,20 +118,18 @@ export default function CartPage() {
               
               <dl className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <dt className="text-sm text-gray-600">小計 (第一階段)</dt>
-                  <dd className="text-sm font-medium text-gray-900">NT$ {totalPriceStage1.toLocaleString()}</dd>
+                  <dt className="text-sm text-gray-600">小計</dt>
+                  <dd className="text-sm font-medium text-gray-900">NT$ {totalPrice.toLocaleString()}</dd>
                 </div>
                 
                 <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
-                  <dt className="text-base font-medium text-gray-900">總計 (第一階段)</dt>
-                  <dd className="text-xl font-bold text-pink-600">NT$ {totalPriceStage1.toLocaleString()}</dd>
+                  <dt className="text-base font-medium text-gray-900">總計</dt>
+                  <dd className="text-xl font-bold text-pink-600">NT$ {totalPrice.toLocaleString()}</dd>
                 </div>
               </dl>
 
               <div className="mt-6">
-                 <p className="text-xs text-gray-500 mb-4">
-                   * 第二階段運費將在商品抵達倉庫後計算並收取。
-                 </p>
+                 {/* Remove shipping note */}
                 <Link
                   href="/checkout"
                   className="w-full flex justify-center items-center bg-gray-900 text-white px-6 py-3 border border-transparent rounded-md text-base font-medium hover:bg-gray-800 transition-colors shadow-sm"

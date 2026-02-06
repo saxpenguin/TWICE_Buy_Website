@@ -15,7 +15,7 @@ export async function createOrder(
   userId: string, 
   userEmail: string,
   items: CartItem[], 
-  totalStage1: number,
+  totalAmount: number,
   shippingInfo: ShippingInfo
 ): Promise<string> {
   
@@ -28,14 +28,12 @@ export async function createOrder(
     userId,
     userEmail,
     items,
-    total_stage1: totalStage1,
-    total_stage2: 0, // Will be calculated later
-    status: 'PENDING_PAYMENT_1',
+    totalAmount,
+    status: 'PENDING_PAYMENT',
     shippingInfo,
     createdAt: Date.now(), // Using timestamp number for client compatibility
     updatedAt: Date.now(),
-    stage1_paid: false,
-    stage2_paid: false
+    isPaid: false
   };
 
   try {

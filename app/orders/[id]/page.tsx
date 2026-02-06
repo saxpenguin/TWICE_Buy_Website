@@ -73,11 +73,8 @@ export default function OrderDetailsPage() {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'PENDING_PAYMENT_1': return '待付第一階段款項';
-      case 'PAID_PAYMENT_1': return '已付第一階段款項';
-      case 'ARRIVED_TW': return '已抵台 (計算運費中)';
-      case 'PENDING_PAYMENT_2': return '待付二補運費';
-      case 'PAID_PAYMENT_2': return '已付二補運費';
+      case 'PENDING_PAYMENT': return '待付款';
+      case 'PAID': return '已付款';
       case 'SHIPPED': return '已出貨';
       case 'COMPLETED': return '訂單完成';
       case 'CANCELLED': return '已取消';
@@ -87,7 +84,7 @@ export default function OrderDetailsPage() {
 
   const [processingPayment, setProcessingPayment] = useState(false);
 
-  const handlePayment = async (stage: '1' | '2') => {
+  const handlePayment = async () => {
     setProcessingPayment(true);
     try {
       // 1. Get Cloud Function Instance
@@ -98,8 +95,7 @@ export default function OrderDetailsPage() {
       
       // 2. Call Function
       const result = await createPaymentRequest({
-        orderId: order?.id,
-        stage: stage
+        orderId: order?.id
       });
       
       const data = result.data as any;
@@ -166,8 +162,8 @@ export default function OrderDetailsPage() {
           </div>
           <div className="mt-4 md:mt-0">
              <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border
-               ${order.status === 'PENDING_PAYMENT_1' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 
-                 order.status === 'PAID_PAYMENT_1' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+               ${order.status === 'PENDING_PAYMENT' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 
+                 order.status === 'PAID' ? 'bg-blue-100 text-blue-800 border-blue-200' :
                  'bg-gray-100 text-gray-800 border-gray-200'}`}>
                {getStatusText(order.status)}
              </span>
@@ -203,7 +199,7 @@ export default function OrderDetailsPage() {
                     <div className="ml-4 flex-1 flex flex-col justify-between">
                        <div className="flex justify-between">
                          <h3 className="text-base font-medium text-gray-900">{item.name}</h3>
-                         <p className="text-base font-medium text-gray-900">NT$ {(item.price_stage1 * item.quantity).toLocaleString()}</p>
+                         <p className="text-base font-medium text-gray-900">NT$ {(item.price * item.quantity).toLocaleString()}</p>
                        </div>
                        <p className="text-sm text-gray-500">數量: {item.quantity}</p>
                     </div>
@@ -215,19 +211,14 @@ export default function OrderDetailsPage() {
            {/* Summary Totals */}
            <div className="bg-gray-50 p-6 border-t border-gray-200">
               <div className="flex justify-between mb-2">
-                 <span className="text-gray-600">小計 (第一階段)</span>
-                 <span className="text-gray-900 font-medium">NT$ {order.total_stage1.toLocaleString()}</span>
+                 <span className="text-gray-600">小計</span>
+                 <span className="text-gray-900 font-medium">NT$ {order.totalAmount.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between mb-4">
-                 <span className="text-gray-600">運費 (二補)</span>
-                 <span className="text-gray-900 font-medium">
-                   {order.total_stage2 > 0 ? `NT$ ${order.total_stage2.toLocaleString()}` : '尚未計算'}
-                 </span>
-              </div>
+              
               <div className="flex justify-between border-t border-gray-200 pt-4">
-                 <span className="text-lg font-bold text-gray-900">已付總額</span>
+                 <span className="text-lg font-bold text-gray-900">總金額</span>
                  <span className="text-lg font-bold text-pink-600">
-                   NT$ {((order.stage1_paid ? order.total_stage1 : 0) + (order.stage2_paid ? order.total_stage2 : 0)).toLocaleString()}
+                   NT$ {order.totalAmount.toLocaleString()}
                  </span>
               </div>
            </div>
@@ -258,23 +249,13 @@ export default function OrderDetailsPage() {
 
         {/* Action Buttons */}
         <div className="flex justify-center">
-           {order.status === 'PENDING_PAYMENT_1' && (
+           {order.status === 'PENDING_PAYMENT' && (
              <button 
-               onClick={() => handlePayment('1')}
+               onClick={handlePayment}
                disabled={processingPayment}
                className={`bg-pink-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-pink-700 shadow-lg transform transition hover:scale-105 ${processingPayment ? 'opacity-50 cursor-not-allowed' : ''}`}
              >
-               {processingPayment ? '處理中...' : '立即付款 (第一階段)'}
-             </button>
-           )}
-
-           {order.status === 'PENDING_PAYMENT_2' && (
-             <button 
-               onClick={() => handlePayment('2')}
-               disabled={processingPayment}
-               className={`bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 shadow-lg transform transition hover:scale-105 ${processingPayment ? 'opacity-50 cursor-not-allowed' : ''}`}
-             >
-               {processingPayment ? '處理中...' : '支付運費 (第二階段)'}
+               {processingPayment ? '處理中...' : '立即付款'}
              </button>
            )}
            

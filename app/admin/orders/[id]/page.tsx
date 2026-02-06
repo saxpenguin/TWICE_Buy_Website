@@ -25,8 +25,6 @@ export default function AdminOrderDetailsPage({ params }: { params: Promise<{ id
         if (docSnap.exists()) {
           const data = docSnap.data() as Order;
           setOrder(data);
-          // Initialize shipping fee input if it exists, otherwise 0
-          setShippingFee(data.total_stage2 || 0);
         } else {
           router.push('/admin/orders');
         }
@@ -61,36 +59,13 @@ export default function AdminOrderDetailsPage({ params }: { params: Promise<{ id
   };
 
   const handleShippingFeeUpdate = async () => {
-    if (!order) return;
-    setUpdating(true);
-    try {
-      const orderRef = doc(db, 'orders', order.id);
-      
-      // If setting shipping fee, we usually want to move to Arrived at TW or Pending Payment 2
-      // For now, just update the fee and maybe prompt status change manually
-      await updateDoc(orderRef, {
-        total_stage2: shippingFee,
-        status: 'PENDING_PAYMENT_2', // Auto update status to prompt user for payment
-        updatedAt: Date.now()
-      });
-      
-      setOrder({ ...order, total_stage2: shippingFee, status: 'PENDING_PAYMENT_2', updatedAt: Date.now() });
-      alert('Shipping fee updated and status set to PENDING_PAYMENT_2');
-    } catch (error) {
-      console.error('Error updating shipping fee:', error);
-      alert('Failed to update shipping fee');
-    } finally {
-      setUpdating(false);
-    }
+    /* Shipping fee functionality is deprecated in single-stage payment */
   };
 
   // Helper to check if a status transition is logical (optional, simplified for now)
   const availableStatuses: OrderStatus[] = [
-    'PENDING_PAYMENT_1',
-    'PAID_PAYMENT_1',
-    'ARRIVED_TW',
-    'PENDING_PAYMENT_2',
-    'PAID_PAYMENT_2',
+    'PENDING_PAYMENT',
+    'PAID',
     'SHIPPED',
     'COMPLETED',
     'CANCELLED'
@@ -143,7 +118,7 @@ export default function AdminOrderDetailsPage({ params }: { params: Promise<{ id
                   <div className="ml-4 flex-1">
                     <div className="flex justify-between text-base font-medium text-gray-900">
                       <h3>{item.name}</h3>
-                      <p>NT$ {item.price_stage1.toLocaleString()}</p>
+                      <p>NT$ {item.price.toLocaleString()}</p>
                     </div>
                     <p className="mt-1 text-sm text-gray-500">Qty: {item.quantity}</p>
                   </div>
@@ -152,8 +127,8 @@ export default function AdminOrderDetailsPage({ params }: { params: Promise<{ id
             </ul>
             <div className="px-4 py-4 sm:px-6 bg-gray-50 flex justify-end">
               <div className="text-right">
-                 <p className="text-sm text-gray-500">Stage 1 Total (Products)</p>
-                 <p className="text-xl font-bold text-gray-900">NT$ {order.total_stage1.toLocaleString()}</p>
+                 <p className="text-sm text-gray-500">Total Amount</p>
+                 <p className="text-xl font-bold text-gray-900">NT$ {order.totalAmount.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -206,53 +181,18 @@ export default function AdminOrderDetailsPage({ params }: { params: Promise<{ id
            </div>
 
            <div className="bg-white shadow overflow-hidden sm:rounded-lg p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Stage 2: Shipping Fee</h3>
-              <div className="space-y-4">
-                 <div>
-                    <label htmlFor="shippingFee" className="block text-sm font-medium text-gray-700">
-                       International + Domestic Shipping (NT$)
-                    </label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                       <input
-                          type="number"
-                          name="shippingFee"
-                          id="shippingFee"
-                          className="focus:ring-pink-500 focus:border-pink-500 block w-full pl-3 pr-12 sm:text-sm border-gray-300 rounded-md"
-                          placeholder="0"
-                          value={shippingFee}
-                          onChange={(e) => setShippingFee(Number(e.target.value))}
-                       />
-                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                          <span className="text-gray-500 sm:text-sm">NTD</span>
-                       </div>
-                    </div>
-                 </div>
-                 <button
-                    onClick={handleShippingFeeUpdate}
-                    disabled={updating}
-                    className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                 >
-                    {updating ? 'Updating...' : 'Update Fee'}
-                 </button>
-                 <p className="text-xs text-gray-500 mt-2">
-                    Setting this fee does not automatically charge the user. You must also update the status to "PENDING_PAYMENT_2" to notify them.
-                 </p>
-              </div>
+              {/* Deprecated Shipping Fee Section */}
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Stage 2: Shipping Fee (Deprecated)</h3>
+              <p className="text-sm text-gray-500">Shipping fee calculation is no longer supported in this version.</p>
            </div>
            
            <div className="bg-white shadow overflow-hidden sm:rounded-lg p-6">
                <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Info</h3>
                <dl className="space-y-2 text-sm">
                    <div className="flex justify-between">
-                       <dt className="text-gray-500">Stage 1 Paid:</dt>
-                       <dd className={`font-medium ${order.stage1_paid ? 'text-green-600' : 'text-red-600'}`}>
-                           {order.stage1_paid ? 'Yes' : 'No'}
-                       </dd>
-                   </div>
-                   <div className="flex justify-between">
-                       <dt className="text-gray-500">Stage 2 Paid:</dt>
-                       <dd className={`font-medium ${order.stage2_paid ? 'text-green-600' : 'text-red-600'}`}>
-                           {order.stage2_paid ? 'Yes' : 'No'}
+                       <dt className="text-gray-500">Paid:</dt>
+                       <dd className={`font-medium ${order.isPaid ? 'text-green-600' : 'text-red-600'}`}>
+                           {order.isPaid ? 'Yes' : 'No'}
                        </dd>
                    </div>
                </dl>

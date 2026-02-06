@@ -146,15 +146,9 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
 
               <div className="border-t border-b border-gray-200 py-6 mb-6">
                 <div className="flex justify-between items-end mb-2">
-                  <span className="text-gray-600 font-medium">第一階段付款 (商品本體)</span>
-                  <span className="text-3xl font-bold text-pink-600">NT$ {product.price_stage1.toLocaleString()}</span>
+                  <span className="text-gray-600 font-medium">價格</span>
+                  <span className="text-3xl font-bold text-pink-600">NT$ {product.price.toLocaleString()}</span>
                 </div>
-                {product.price_stage2_est && (
-                  <div className="flex justify-between items-end text-sm text-gray-500">
-                     <span>預估二補 (運費)</span>
-                     <span>+ NT$ {product.price_stage2_est.toLocaleString()}</span>
-                  </div>
-                )}
               </div>
 
               <div className="prose prose-pink max-w-none mb-8 text-gray-600">
@@ -175,9 +169,6 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
                      已截止
                    </button>
                  )}
-                 <p className="text-xs text-center text-gray-500 mt-2">
-                   * 第二階段付款 (運費) 將在商品抵達倉庫後計算並通知付款。
-                 </p>
               </div>
             </div>
           </div>

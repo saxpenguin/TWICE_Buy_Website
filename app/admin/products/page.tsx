@@ -97,8 +97,9 @@ export default function AdminProductsPage() {
                   Product
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Price (S1)
+                  Price
                 </th>
+
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Stock
                 </th>
@@ -142,8 +143,9 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">NT$ {product.price_stage1.toLocaleString()}</div>
+                      <div className="text-sm text-gray-900">NT$ {product.price.toLocaleString()}</div>
                     </td>
+
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{product.stock}</div>
                     </td>

@@ -12,8 +12,7 @@ export default function AdminAddProductPage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    price_stage1: '',
-    price_stage2_est: '',
+    price: '',
     stock: '',
     images: '',
     status: 'PREORDER',
@@ -33,17 +32,13 @@ export default function AdminAddProductPage() {
       const productData: Omit<Product, 'id'> = {
         name: formData.name,
         description: formData.description,
-        price_stage1: Number(formData.price_stage1),
+        price: Number(formData.price),
         stock: Number(formData.stock),
         images: formData.images.split(',').map(url => url.trim()).filter(url => url.length > 0),
         status: formData.status as 'PREORDER' | 'INSTOCK' | 'CLOSED',
         createdAt: Date.now(),
         updatedAt: Date.now()
       };
-
-      if (formData.price_stage2_est) {
-        productData.price_stage2_est = Number(formData.price_stage2_est);
-      }
 
       if (formData.releaseDate) {
         productData.releaseDate = formData.releaseDate;
@@ -92,36 +87,18 @@ export default function AdminAddProductPage() {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
-            <label htmlFor="price_stage1" className="block text-sm font-medium text-gray-700">Price (Stage 1) *</label>
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price *</label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span className="text-gray-500 sm:text-sm">NT$</span>
               </div>
               <input
                 type="number"
-                id="price_stage1"
-                name="price_stage1"
+                id="price"
+                name="price"
                 required
                 min="0"
-                value={formData.price_stage1}
-                onChange={handleChange}
-                className="pl-12 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm p-2 border"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="price_stage2_est" className="block text-sm font-medium text-gray-700">Est. Shipping (Stage 2)</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500 sm:text-sm">NT$</span>
-              </div>
-              <input
-                type="number"
-                id="price_stage2_est"
-                name="price_stage2_est"
-                min="0"
-                value={formData.price_stage2_est}
+                value={formData.price}
                 onChange={handleChange}
                 className="pl-12 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm p-2 border"
               />

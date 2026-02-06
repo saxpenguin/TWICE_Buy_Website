@@ -10,7 +10,7 @@ interface CartContextType {
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
-  totalPriceStage1: number;
+  totalPrice: number;
   isInitialized: boolean;
 }
 
@@ -59,7 +59,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const newItem: CartItem = {
           productId: product.id,
           name: product.name,
-          price_stage1: product.price_stage1,
+          price: product.price,
           quantity: quantity,
           image: product.images && product.images.length > 0 ? product.images[0] : '',
         };
@@ -91,8 +91,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
   
-  const totalPriceStage1 = items.reduce(
-    (total, item) => total + item.price_stage1 * item.quantity,
+  const totalPrice = items.reduce(
+    (total, item) => total + item.price * item.quantity,
     0
   );
 
@@ -105,7 +105,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updateQuantity,
         clearCart,
         totalItems,
-        totalPriceStage1,
+        totalPrice,
         isInitialized,
       }}
     >

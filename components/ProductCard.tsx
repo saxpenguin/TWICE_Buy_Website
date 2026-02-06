@@ -50,19 +50,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         <div className="mt-4 flex items-end justify-between">
           <div>
-            <p className="text-sm text-gray-500">第一階段價格</p>
+            <p className="text-sm text-gray-500">價格</p>
             <p className="text-xl font-bold text-pink-600">
-              NT$ {product.price_stage1.toLocaleString()}
+              NT$ {product.price ? product.price.toLocaleString() : 'N/A'}
             </p>
           </div>
-          {product.price_stage2_est && (
-             <div className="text-right">
-             <p className="text-xs text-gray-400">預估二補</p>
-             <p className="text-sm text-gray-600">
-               + NT$ {product.price_stage2_est.toLocaleString()}
-             </p>
-           </div>
-          )}
         </div>
 
         <button 

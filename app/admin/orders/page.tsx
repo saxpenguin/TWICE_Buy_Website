@@ -38,16 +38,10 @@ export default function AdminOrdersPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING_PAYMENT_1':
+      case 'PENDING_PAYMENT':
         return 'bg-yellow-100 text-yellow-800';
-      case 'PAID_PAYMENT_1':
+      case 'PAID':
         return 'bg-blue-100 text-blue-800';
-      case 'ARRIVED_TW':
-        return 'bg-indigo-100 text-indigo-800';
-      case 'PENDING_PAYMENT_2':
-        return 'bg-orange-100 text-orange-800';
-      case 'PAID_PAYMENT_2':
-        return 'bg-teal-100 text-teal-800';
       case 'SHIPPED':
         return 'bg-purple-100 text-purple-800';
       case 'COMPLETED':
@@ -103,7 +97,7 @@ export default function AdminOrdersPage() {
                 Customer
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total (Stage 1)
+                Total Amount
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
@@ -129,7 +123,7 @@ export default function AdminOrdersPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  NT$ {order.total_stage1.toLocaleString()}
+                  NT$ {order.totalAmount.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)}`}>

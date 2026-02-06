@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { createOrder } from '@/lib/orderService';
 
 export default function CheckoutPage() {
-  const { items, totalPriceStage1, totalItems, clearCart, isInitialized } = useCart();
+  const { items, totalPrice, totalItems, clearCart, isInitialized } = useCart();
   const { user, profile, loading } = useAuth();
   const router = useRouter();
   
@@ -65,7 +65,7 @@ export default function CheckoutPage() {
         user.uid,
         user.email || '',
         items,
-        totalPriceStage1,
+        totalPrice,
         formData
       );
       
@@ -243,7 +243,7 @@ export default function CheckoutPage() {
                         <div>
                           <div className="flex justify-between text-base font-medium text-gray-900">
                             <h3 className="line-clamp-1">{item.name}</h3>
-                            <p className="ml-2">NT$ {(item.price_stage1 * item.quantity).toLocaleString()}</p>
+                            <p className="ml-2">NT$ {(item.price * item.quantity).toLocaleString()}</p>
                           </div>
                         </div>
                         <div className="flex-1 flex items-end justify-between text-sm">
@@ -256,8 +256,8 @@ export default function CheckoutPage() {
 
               <dl className="space-y-4 border-t border-gray-200 pt-6">
                 <div className="flex items-center justify-between">
-                  <dt className="text-sm text-gray-600">小計 (第一階段)</dt>
-                  <dd className="text-sm font-medium text-gray-900">NT$ {totalPriceStage1.toLocaleString()}</dd>
+                  <dt className="text-sm text-gray-600">小計</dt>
+                  <dd className="text-sm font-medium text-gray-900">NT$ {totalPrice.toLocaleString()}</dd>
                 </div>
                 
                  <div className="flex items-center justify-between">
@@ -266,13 +266,13 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
-                  <dt className="text-base font-bold text-gray-900">應付總額 (第一階段)</dt>
-                  <dd className="text-xl font-bold text-pink-600">NT$ {totalPriceStage1.toLocaleString()}</dd>
+                  <dt className="text-base font-bold text-gray-900">應付總額</dt>
+                  <dd className="text-xl font-bold text-pink-600">NT$ {totalPrice.toLocaleString()}</dd>
                 </div>
               </dl>
               
               <div className="mt-4 text-xs text-gray-500">
-                 * 您目前僅需支付商品費用。運費 (第二階段) 將在商品抵達倉庫後計算並收取。
+                 {/* Removed stage note */}
               </div>
 
                <div className="mt-6 text-center">

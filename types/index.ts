@@ -1,15 +1,12 @@
 // types/index.ts
 
-// 訂單狀態 (最複雜的部分，定義好就成功一半了)
+// 訂單狀態 (簡化為一次性付款流程)
 export type OrderStatus = 
-  | 'PENDING_PAYMENT_1'   // 剛下單，未付本體費
-  | 'PAID_PAYMENT_1'      // 已付本體，等待官方發貨/運回中
-  | 'ARRIVED_TW'          // 抵達台灣，等待二補
-  | 'PENDING_PAYMENT_2'   // 通知二補中
-  | 'PAID_PAYMENT_2'      // 已付運費，準備出貨
-  | 'SHIPPED'             // 已寄出給客人
-  | 'COMPLETED'           // 訂單完成
-  | 'CANCELLED';          // 已取消
+  | 'PENDING_PAYMENT'   // 剛下單，未付款
+  | 'PAID'              // 已付款 (包含商品與預設運費)
+  | 'SHIPPED'           // 已寄出
+  | 'COMPLETED'         // 訂單完成
+  | 'CANCELLED';        // 已取消
 
 // 商品資訊
 export interface Product {
@@ -17,8 +14,7 @@ export interface Product {
   name: string;
   description: string;
   images: string[];       // 圖片 URL 陣列
-  price_stage1: number;   // 商品本體價格
-  price_stage2_est?: number; // 預估二補運費 (選填，供參考)
+  price: number;          // 商品價格
   stock: number;
   status: 'PREORDER' | 'INSTOCK' | 'CLOSED';
   releaseDate?: string;   // 預計發售日
@@ -30,7 +26,7 @@ export interface Product {
 export interface CartItem {
   productId: string;
   name: string;
-  price_stage1: number;
+  price: number;
   quantity: number;
   image: string;
 }
@@ -51,22 +47,17 @@ export interface Order {
   items: CartItem[];
   
   // 金額計算
-  total_stage1: number;   // 商品總額
-  total_stage2: number;   // 國際運費 + 國內運費 (初始為 0)
+  totalAmount: number;    // 訂單總額
   
   status: OrderStatus;
 
-  // Track payment status roughly
-  stage1_paid: boolean;
-  stage2_paid: boolean;
+  isPaid: boolean;        // 是否已付款
+  paidAt?: number;        // 付款時間
   
-  // 新增：付款詳情 (由後端 webhook 更新)
+  // 付款詳情 (由後端 webhook 更新)
   paymentInfo?: {
-    stage1_transactionId?: string; // 綠界交易編號 (第一段)
-    stage1_paidAt?: number;        // 付款時間
-    stage2_transactionId?: string; // 綠界交易編號 (第二段)
-    stage2_paidAt?: number;        // 付款時間
-    paymentMethod?: string;        // Credit, ATM, CVS...
+    transactionId?: string; // 綠界交易編號
+    paymentMethod?: string; // Credit, ATM, CVS...
   };
 
   // 收件資訊 (結帳時填寫)

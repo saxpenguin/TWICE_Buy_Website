@@ -6,22 +6,23 @@ import { collection, getDocs, query, where, orderBy, limit } from 'firebase/fire
 import { db } from '@/lib/firebase';
 import { Order, Product } from '@/types';
 
-interface DashboardStats {
-  totalOrders: number;
-  totalRevenue: number;
-  pendingStage1: number;
-  pendingStage2: number;
-  totalProducts: number;
-}
+  interface DashboardStats {
+    totalOrders: number;
+    totalRevenue: number;
+    pendingPayment: number;
+    shipped: number;
+    totalProducts: number;
+  }
 
-export default function AdminDashboardPage() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalOrders: 0,
-    totalRevenue: 0,
-    pendingStage1: 0,
-    pendingStage2: 0,
-    totalProducts: 0,
-  });
+  export default function AdminDashboardPage() {
+    const [stats, setStats] = useState<DashboardStats>({
+      totalOrders: 0,
+      totalRevenue: 0,
+      pendingPayment: 0,
+      shipped: 0,
+      totalProducts: 0,
+    });
+
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,19 +34,18 @@ export default function AdminDashboardPage() {
         const ordersSnapshot = await getDocs(ordersRef);
         
         let revenue = 0;
-        let pendingS1 = 0;
-        let pendingS2 = 0;
+        let pending = 0;
+        let shippedCount = 0;
         
         ordersSnapshot.forEach(doc => {
           const order = doc.data() as Order;
           
-          // Calculate Revenue (Only count paid stages)
-          if (order.stage1_paid) revenue += order.total_stage1;
-          if (order.stage2_paid) revenue += order.total_stage2;
+          // Calculate Revenue (Only count paid orders)
+          if (order.isPaid) revenue += order.totalAmount;
 
           // Count Pending Tasks
-          if (order.status === 'PENDING_PAYMENT_1') pendingS1++;
-          if (order.status === 'PENDING_PAYMENT_2' || order.status === 'ARRIVED_TW') pendingS2++;
+          if (order.status === 'PENDING_PAYMENT') pending++;
+          if (order.status === 'SHIPPED') shippedCount++;
         });
 
         // 2. Fetch Recent Orders (Limit 5)
@@ -63,8 +63,8 @@ export default function AdminDashboardPage() {
         setStats({
           totalOrders: ordersSnapshot.size,
           totalRevenue: revenue,
-          pendingStage1: pendingS1,
-          pendingStage2: pendingS2,
+          pendingPayment: pending,
+          shipped: shippedCount,
           totalProducts: productsSnapshot.size,
         });
 
@@ -105,15 +105,15 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-gray-500 text-sm font-medium">Pending Stage 1</h3>
-          <p className="text-2xl font-bold text-orange-600 mt-2">{stats.pendingStage1}</p>
+          <h3 className="text-gray-500 text-sm font-medium">Pending Payment</h3>
+          <p className="text-2xl font-bold text-orange-600 mt-2">{stats.pendingPayment}</p>
           <p className="text-xs text-gray-400 mt-1">Need Payment</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-gray-500 text-sm font-medium">Action Required (Stage 2)</h3>
-          <p className="text-2xl font-bold text-pink-600 mt-2">{stats.pendingStage2}</p>
-          <p className="text-xs text-gray-400 mt-1">Weighing / Shipping</p>
+          <h3 className="text-gray-500 text-sm font-medium">Shipped Orders</h3>
+          <p className="text-2xl font-bold text-pink-600 mt-2">{stats.shipped}</p>
+          <p className="text-xs text-gray-400 mt-1">Dispatched</p>
         </div>
       </div>
 
