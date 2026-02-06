@@ -84,9 +84,7 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
 - [X] **Task 4.1:** Admin Order Management
     - UI to view orders and input "Weight" or "Shipping Fee".
     - Trigger status update to `PENDING_PAYMENT_2`.
-- [ ] **Task 4.2:** User Stage 2 Payment
-    - Notification to user (Email/UI).
-    - Checkout flow for the shipping fee.
+
 
 ## Enhancements (Medium Priority)
 - [ ] **[notify-1]** Set up Email trigger (SendGrid or Firebase Email Extension) for "Order Confirmed"

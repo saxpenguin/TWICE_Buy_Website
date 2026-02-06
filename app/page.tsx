@@ -1,6 +1,8 @@
 import { MOCK_PRODUCTS } from '@/data/mock';
 import ProductCard from '@/components/ProductCard';
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
