@@ -37,7 +37,7 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
     - Create Admin Order View to update status (e.g., mark as Arrived at Warehouse).
     - Implement Shipping Fee Calculator input for Admin.
 
-- [ ] **Task 2.5:** Admin Users Management (`app/admin/users/page.tsx`)
+- [X] **Task 2.5:** Admin Users Management (`app/admin/users/page.tsx`)
     - List all registered users.
     - View user details and history.
     - Manage user roles (Admin/User).
