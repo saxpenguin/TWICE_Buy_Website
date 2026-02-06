@@ -50,23 +50,34 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
 ## Phase 3: Payment Integration (Stage 1 - ECPay 綠界金流)
 **Goal:** Replace manual ordering with real payment processing via ECPay.
 
-- [ ] **Task 3.1:** Payment Initialization (Cloud Functions)
+- [ ] **Task 3.0:** ECPay Account & Secrets Setup (Pre-requisite)
+    - Apply for ECPay Merchant Account (Obtain Production MerchantID, HashKey, HashIV).
+    - Setup Google Cloud Secret Manager for `MerchantID`, `HashKey`, and `HashIV` (Do NOT hardcode).
+        - Create secrets: `ECPAY_MERCHANT_ID`, `ECPAY_HASH_KEY`, `ECPAY_HASH_IV`.
+        - Use CLI: `firebase functions:secrets:set ECPAY_HASH_KEY`.
+        - Ensure Cloud Functions Service Account has "Secret Manager Secret Accessor" role.
+
+- [X] **Task 3.1:** Payment Initialization (Cloud Functions)
     - Implement `getEcpayRequest` `onCall` function.
-    - Setup Google Cloud Secret Manager for `MerchantID`, `HashKey`, and `HashIV`.
     - Generate `CheckMacValue` (SHA256) according to ECPay specs — strictly server-side.
     - Create a "Pending" order in Firestore with a unique `MerchantTradeNo`.
 
-- [ ] **Task 3.2:** Payment Callback / Webhook
+- [X] **Task 3.2:** Payment Callback / Webhook
     - Create an `onRequest` (HTTPS) trigger for `ReturnURL` (server-to-server).
     - **Security:** Re-calculate and verify incoming `CheckMacValue` from ECPay.
     - **Idempotency:** Check if order is already `PAID_PAYMENT_1` before processing.
     - **Atomicity:** Use a Firestore Transaction to update order status.
     - Return `1|OK` to ECPay to acknowledge receipt.
 
-- [ ] **Task 3.3:** Frontend Payment Redirection
+- [X] **Task 3.3:** Frontend Payment Redirection
     - Create a hidden form component that accepts the `onCall` response parameters.
     - Auto-submit (`form.submit()`) to redirect user to ECPay's payment gateway.
     - Handle `OrderResultURL` (client-side redirect) to show "Payment Success" page.
+
+- [ ] **Task 3.4:** Environment Variables (Production)
+    - Replace test keys in `functions/src/index.ts` with production keys for launch.
+    - Use Firebase Config to manage secrets: `firebase functions:config:set ecpay.merchant_id="ID" ecpay.hash_key="Key" ecpay.hash_iv="IV"`
+    - Update code to read `functions.config().ecpay` values instead of hardcoded strings.
 
 ## Phase 4: Logistics & Stage 2 Payment
 **Goal:** Handle the "Arrival at Warehouse" and shipping fee collection.

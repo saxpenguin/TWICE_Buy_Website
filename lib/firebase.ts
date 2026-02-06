@@ -1,6 +1,7 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFunctions, Functions } from 'firebase/functions';
 
 // Firebase configuration
 // Replace these with your actual Firebase config values
@@ -17,15 +18,18 @@ const firebaseConfig = {
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
+let functions: Functions;
 
 if (!getApps().length) {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
+  functions = getFunctions(app); // Default region is us-central1
 } else {
   app = getApps()[0];
   auth = getAuth(app);
   db = getFirestore(app);
+  functions = getFunctions(app);
 }
 
-export { app, auth, db };
+export { app, auth, db, functions };

@@ -68,6 +68,54 @@ export default function OrderDetailsPage() {
     }
   };
 
+  const [processingPayment, setProcessingPayment] = useState(false);
+
+  const handlePayment = async (stage: '1' | '2') => {
+    setProcessingPayment(true);
+    try {
+      // 1. Get Cloud Function Instance
+      const { httpsCallable } = await import('firebase/functions');
+      const { functions } = await import('@/lib/firebase');
+      
+      const createPaymentRequest = httpsCallable(functions, 'createPaymentRequest');
+      
+      // 2. Call Function
+      const result = await createPaymentRequest({
+        orderId: order?.id,
+        stage: stage
+      });
+      
+      const data = result.data as any;
+
+      if (data.success) {
+        // 3. Create a hidden form and submit it to ECPay
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = data.paymentUrl; // ECPay URL
+
+        // Append all params as hidden inputs
+        Object.keys(data.params).forEach(key => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = data.params[key];
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+      } else {
+        alert('Payment initialization failed.');
+      }
+
+    } catch (error: any) {
+      console.error('Payment Error:', error);
+      alert(`Error: ${error.message || 'Payment failed'}`);
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
@@ -187,8 +235,22 @@ export default function OrderDetailsPage() {
         {/* Action Buttons */}
         <div className="flex justify-center">
            {order.status === 'PENDING_PAYMENT_1' && (
-             <button className="bg-pink-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-pink-700 shadow-lg transform transition hover:scale-105">
-               立即付款 (第一階段)
+             <button 
+               onClick={() => handlePayment('1')}
+               disabled={processingPayment}
+               className={`bg-pink-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-pink-700 shadow-lg transform transition hover:scale-105 ${processingPayment ? 'opacity-50 cursor-not-allowed' : ''}`}
+             >
+               {processingPayment ? '處理中...' : '立即付款 (第一階段)'}
+             </button>
+           )}
+
+           {order.status === 'PENDING_PAYMENT_2' && (
+             <button 
+               onClick={() => handlePayment('2')}
+               disabled={processingPayment}
+               className={`bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 shadow-lg transform transition hover:scale-105 ${processingPayment ? 'opacity-50 cursor-not-allowed' : ''}`}
+             >
+               {processingPayment ? '處理中...' : '支付運費 (第二階段)'}
              </button>
            )}
            
