@@ -44,12 +44,16 @@ async function sendOrderEmail(to: string, subject: string, html: string) {
   }
 }
 
-// ECPay Test Environment Credentials
+// ECPay Configuration
+// Uses environment variables if available, otherwise falls back to Test environment
 const ECPAY_CONFIG = {
-  MerchantID: "2000132",
-  HashKey: "5294y06JbISpM5x9",
-  HashIV: "v77hoKGq4kWxNNIS",
-  PaymentUrl: "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5",
+  MerchantID: process.env.ECPAY_MERCHANT_ID || "2000132",
+  HashKey: process.env.ECPAY_HASH_KEY || "5294y06JbISpM5x9",
+  HashIV: process.env.ECPAY_HASH_IV || "v77hoKGq4kWxNNIS",
+  // Automatically switch to Production URL if not using the default Test MerchantID (2000132)
+  PaymentUrl: (process.env.ECPAY_MERCHANT_ID && process.env.ECPAY_MERCHANT_ID !== "2000132")
+    ? "https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5"
+    : "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5",
 };
 
 /**
