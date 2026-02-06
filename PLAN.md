@@ -81,7 +81,7 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
 
 ## Phase 4: Logistics & Stage 2 Payment
 **Goal:** Handle the "Arrival at Warehouse" and shipping fee collection.
-- [ ] **Task 4.1:** Admin Order Management
+- [X] **Task 4.1:** Admin Order Management
     - UI to view orders and input "Weight" or "Shipping Fee".
     - Trigger status update to `PENDING_PAYMENT_2`.
 - [ ] **Task 4.2:** User Stage 2 Payment

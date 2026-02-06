@@ -70,11 +70,12 @@ export default function AdminOrderDetailsPage({ params }: { params: Promise<{ id
       // For now, just update the fee and maybe prompt status change manually
       await updateDoc(orderRef, {
         total_stage2: shippingFee,
+        status: 'PENDING_PAYMENT_2', // Auto update status to prompt user for payment
         updatedAt: Date.now()
       });
       
-      setOrder({ ...order, total_stage2: shippingFee, updatedAt: Date.now() });
-      alert('Shipping fee updated successfully');
+      setOrder({ ...order, total_stage2: shippingFee, status: 'PENDING_PAYMENT_2', updatedAt: Date.now() });
+      alert('Shipping fee updated and status set to PENDING_PAYMENT_2');
     } catch (error) {
       console.error('Error updating shipping fee:', error);
       alert('Failed to update shipping fee');
