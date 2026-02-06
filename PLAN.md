@@ -47,14 +47,26 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
     - Recent Activity feed.
     - Quick links to manage products and orders.
 
-## Phase 3: Payment Integration (Stage 1)
-**Goal:** Replace manual ordering with real payment processing.
-- [ ] **Task 3.1:** Payment Request Function (Cloud Functions)
-    - Integration with Payment Gateway (ECPay placeholder or SDK).
-    - `onCall` function to generate payment form data.
-- [ ] **Task 3.2:** Payment Callback/Webhook
-    - HTTPS trigger to handle server-to-server notifications.
-    - Update order status to `PAID_PAYMENT_1`.
+## Phase 3: Payment Integration (Stage 1 - ECPay 綠界金流)
+**Goal:** Replace manual ordering with real payment processing via ECPay.
+
+- [ ] **Task 3.1:** Payment Initialization (Cloud Functions)
+    - Implement `getEcpayRequest` `onCall` function.
+    - Setup Google Cloud Secret Manager for `MerchantID`, `HashKey`, and `HashIV`.
+    - Generate `CheckMacValue` (SHA256) according to ECPay specs — strictly server-side.
+    - Create a "Pending" order in Firestore with a unique `MerchantTradeNo`.
+
+- [ ] **Task 3.2:** Payment Callback / Webhook
+    - Create an `onRequest` (HTTPS) trigger for `ReturnURL` (server-to-server).
+    - **Security:** Re-calculate and verify incoming `CheckMacValue` from ECPay.
+    - **Idempotency:** Check if order is already `PAID_PAYMENT_1` before processing.
+    - **Atomicity:** Use a Firestore Transaction to update order status.
+    - Return `1|OK` to ECPay to acknowledge receipt.
+
+- [ ] **Task 3.3:** Frontend Payment Redirection
+    - Create a hidden form component that accepts the `onCall` response parameters.
+    - Auto-submit (`form.submit()`) to redirect user to ECPay's payment gateway.
+    - Handle `OrderResultURL` (client-side redirect) to show "Payment Success" page.
 
 ## Phase 4: Logistics & Stage 2 Payment
 **Goal:** Handle the "Arrival at Warehouse" and shipping fee collection.
