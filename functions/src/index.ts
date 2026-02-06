@@ -150,9 +150,9 @@ export const createPaymentRequest = functions.https.onCall(async (data, context)
 
   // 3. Generate Payment Parameters
   // Ensure MerchantTradeNo is unique and under 20 chars.
-  // We use the first 6 chars of OrderID, the stage, and the timestamp.
-  // This prevents truncation of the timestamp which caused duplicate order errors.
-  const merchantTradeNo = `${orderId.substring(0, 6)}${stage}${Date.now()}`;
+  // We use the first 6 chars of OrderID, the stage, and a hex timestamp to stay within the limit.
+  // Date.now() is 13 chars, but Date.now().toString(16) is ~11 chars. 6 + 1 + 11 = 18 chars.
+  const merchantTradeNo = `${orderId.substring(0, 6)}${stage}${Date.now().toString(16)}`;
   const merchantTradeDate = new Date().toLocaleString('zh-TW', { 
     hour12: false, 
     year: 'numeric', 
