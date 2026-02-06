@@ -172,7 +172,7 @@ export const createPaymentRequest = functions.https.onCall(async (data, context)
     TradeDesc: "Proxy Buying Service",
     ItemName: itemName,
     ReturnURL: `https://us-central1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/paymentCallback`,
-    OrderResultURL: `https://pingping-goods.com/orders/${orderId}`, // Client-side redirect after payment
+    OrderResultURL: `https://twice-buywebsite.web.app/api/payment/result`, // Client-side redirect after payment
     ChoosePayment: "ALL",
     EncryptType: "1",
     CustomField1: orderId,

@@ -14,9 +14,26 @@ export default function OrderDetailsPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   
+  // Use searchParams to check for payment result query
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const paymentStatus = searchParams.get('payment');
+  const paymentMsg = searchParams.get('msg');
+
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [paymentSuccessMsg, setPaymentSuccessMsg] = useState('');
+
+  useEffect(() => {
+    if (paymentStatus === 'success') {
+       setPaymentSuccessMsg('Payment Successful! Thank you.');
+       // Optionally clear the query param
+       const newUrl = window.location.pathname;
+       window.history.replaceState({}, '', newUrl);
+    } else if (paymentStatus === 'failed') {
+       setError(paymentMsg ? decodeURIComponent(paymentMsg) : 'Payment Failed. Please try again.');
+    }
+  }, [paymentStatus, paymentMsg]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -156,6 +173,13 @@ export default function OrderDetailsPage() {
              </span>
           </div>
         </div>
+
+        {paymentSuccessMsg && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+            <strong className="font-bold">Success! </strong>
+            <span className="block sm:inline">{paymentSuccessMsg}</span>
+          </div>
+        )}
 
         <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
            {/* Order Items */}
