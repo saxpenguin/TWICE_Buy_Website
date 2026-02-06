@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useCart } from '@/lib/context/CartContext';
 
 export default function Navbar() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
   const { totalItems } = useCart();
 
   return (
@@ -55,7 +55,9 @@ export default function Navbar() {
               )}
             </Link>
 
-            {user ? (
+            {loading ? (
+              <div className="h-9 w-20 bg-gray-100 rounded-md animate-pulse"></div>
+            ) : user ? (
               <>
                 <span className="text-sm text-gray-700 hidden md:inline">
                   嗨, {user.displayName || user.email}

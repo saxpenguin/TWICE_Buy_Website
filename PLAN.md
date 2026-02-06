@@ -41,7 +41,7 @@
 00040| ## Phase 3: Payment Integration (Stage 1)
 00041| **Goal:** Replace manual ordering with real payment processing.
 00042| - [ ] **Task 3.1:** Payment Request Function (Cloud Functions)
-00043|     - Integration with Payment Gateway (ECPay/NewebPay placeholder or SDK).
+00043|     - Integration with Payment Gateway (ECPay placeholder or SDK).
 00044|     - `onCall` function to generate payment form data.
 00045| - [ ] **Task 3.2:** Payment Callback/Webhook
 00046|     - HTTPS trigger to handle server-to-server notifications.
