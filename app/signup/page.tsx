@@ -85,12 +85,12 @@ export default function SignupPage() {
       <div className="w-full max-w-md space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-            Create a new account
+            註冊新帳號
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
+            或者{' '}
             <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-              sign in to existing account
+              登入現有帳號
             </Link>
           </p>
         </div>
@@ -98,7 +98,7 @@ export default function SignupPage() {
           <div className="space-y-4 rounded-md shadow-sm">
             <div>
               <label htmlFor="display-name" className="sr-only">
-                Full Name
+                全名
               </label>
               <input
                 id="display-name"
@@ -106,14 +106,14 @@ export default function SignupPage() {
                 type="text"
                 autoComplete="name"
                 className="relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 px-3"
-                placeholder="Full Name (Optional)"
+                placeholder="全名 (選填)"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="email-address" className="sr-only">
-                Email address
+                電子郵件
               </label>
               <input
                 id="email-address"
@@ -122,14 +122,14 @@ export default function SignupPage() {
                 autoComplete="email"
                 required
                 className="relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 px-3"
-                placeholder="Email address"
+                placeholder="電子郵件"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                密碼
               </label>
               <input
                 id="password"
@@ -138,14 +138,14 @@ export default function SignupPage() {
                 autoComplete="new-password"
                 required
                 className="relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 px-3"
-                placeholder="Password"
+                placeholder="密碼"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="confirm-password" className="sr-only">
-                Confirm Password
+                確認密碼
               </label>
               <input
                 id="confirm-password"
@@ -154,7 +154,7 @@ export default function SignupPage() {
                 autoComplete="new-password"
                 required
                 className="relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 px-3"
-                placeholder="Confirm Password"
+                placeholder="確認密碼"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
@@ -163,7 +163,12 @@ export default function SignupPage() {
 
           {error && (
             <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-              {error}
+              {error === 'Passwords do not match.' ? '密碼不相符。' :
+               error === 'Password must be at least 6 characters.' ? '密碼長度至少需6個字元。' :
+               error === 'Email is already in use.' ? '此電子郵件已被註冊。' :
+               error === 'Invalid email address.' ? '無效的電子郵件地址。' :
+               error === 'Password is too weak.' ? '密碼強度不足。' :
+               '建立帳號失敗，請重試。'}
             </div>
           )}
 
@@ -181,7 +186,7 @@ export default function SignupPage() {
                   </svg>
                 </span>
               ) : null}
-              {loading ? 'Creating account...' : 'Sign up'}
+              {loading ? '註冊中...' : '註冊'}
             </button>
           </div>
         </form>

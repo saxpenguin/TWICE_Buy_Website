@@ -73,7 +73,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
               <Link href="/" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-pink-600">
-                Home
+                首頁
               </Link>
             </li>
             <li>
@@ -82,7 +82,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
                 </svg>
                 <Link href="/products" className="ml-1 text-sm font-medium text-gray-700 hover:text-pink-600 md:ml-2">
-                  Products
+                  商品列表
                 </Link>
               </div>
             </li>
@@ -113,12 +113,12 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full text-gray-400">
-                    No Image Available
+                    目前無圖片
                   </div>
                 )}
                 {product.status === 'PREORDER' && (
                   <div className="absolute top-4 right-4 bg-pink-500 text-white text-sm font-bold px-3 py-1 rounded shadow-md">
-                    PRE-ORDER
+                    預購
                   </div>
                 )}
               </div>
@@ -134,32 +134,32 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
                   product.status === 'PREORDER' ? 'bg-pink-100 text-pink-800' :
                   'bg-gray-100 text-gray-800'
                 }`}>
-                  {product.status === 'INSTOCK' ? 'In Stock' : 
-                   product.status === 'PREORDER' ? 'Pre-order' : 'Closed'}
+                  {product.status === 'INSTOCK' ? '現貨' : 
+                   product.status === 'PREORDER' ? '預購' : '已截單'}
                 </span>
                 {product.releaseDate && (
                    <span className="text-sm text-gray-500">
-                     Release: {product.releaseDate}
+                     發售日: {product.releaseDate}
                    </span>
                 )}
               </div>
 
               <div className="border-t border-b border-gray-200 py-6 mb-6">
                 <div className="flex justify-between items-end mb-2">
-                  <span className="text-gray-600 font-medium">Stage 1 Payment (Product)</span>
+                  <span className="text-gray-600 font-medium">第一階段付款 (商品本體)</span>
                   <span className="text-3xl font-bold text-pink-600">NT$ {product.price_stage1.toLocaleString()}</span>
                 </div>
                 {product.price_stage2_est && (
                   <div className="flex justify-between items-end text-sm text-gray-500">
-                     <span>Estimated Stage 2 (Shipping)</span>
+                     <span>預估二補 (運費)</span>
                      <span>+ NT$ {product.price_stage2_est.toLocaleString()}</span>
                   </div>
                 )}
               </div>
 
               <div className="prose prose-pink max-w-none mb-8 text-gray-600">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
-                <p className="whitespace-pre-line">{product.description || "No description available."}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">商品描述</h3>
+                <p className="whitespace-pre-line">{product.description || "暫無描述。"}</p>
               </div>
 
               <div className="flex flex-col space-y-4">
@@ -168,15 +168,15 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
                      onClick={handleAddToCart}
                      className="w-full bg-gray-900 text-white text-lg font-semibold py-4 px-8 rounded-lg hover:bg-gray-800 transition-colors shadow-md hover:shadow-lg transform active:scale-[0.98] transition-transform"
                    >
-                     {product.status === 'PREORDER' ? 'Pre-order Now' : 'Add to Cart'}
+                     {product.status === 'PREORDER' ? '立即預購' : '加入購物車'}
                    </button>
                  ) : (
                    <button disabled className="w-full bg-gray-300 text-gray-500 text-lg font-semibold py-4 px-8 rounded-lg cursor-not-allowed">
-                     Sales Closed
+                     已截止
                    </button>
                  )}
                  <p className="text-xs text-center text-gray-500 mt-2">
-                   * Stage 2 payment (shipping) will be calculated and charged after the item arrives at our warehouse.
+                   * 第二階段付款 (運費) 將在商品抵達倉庫後計算並通知付款。
                  </p>
               </div>
             </div>

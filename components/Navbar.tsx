@@ -15,7 +15,7 @@ export default function Navbar() {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="text-2xl font-bold text-pink-600">
-                TWICE Proxy
+                PingPing小舖
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -23,19 +23,19 @@ export default function Navbar() {
                 href="/"
                 className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-pink-600 transition-colors"
               >
-                Home
+                首頁
               </Link>
               <Link
                 href="/products"
                 className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-pink-600 transition-colors"
               >
-                Products
+                商品列表
               </Link>
               <Link
                 href="/orders"
                 className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-pink-600 transition-colors"
               >
-                My Orders
+                我的訂單
               </Link>
             </div>
           </div>
@@ -43,7 +43,7 @@ export default function Navbar() {
             <Link 
               href="/cart" 
               className="relative text-gray-700 hover:text-pink-600 transition-colors p-2"
-              aria-label="Shopping Cart"
+              aria-label="購物車"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -58,13 +58,13 @@ export default function Navbar() {
             {user ? (
               <>
                 <span className="text-sm text-gray-700 hidden md:inline">
-                  Hi, {user.displayName || user.email}
+                  嗨, {user.displayName || user.email}
                 </span>
                 <button
                   onClick={() => signOut()}
                   className="bg-gray-100 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors"
                 >
-                  Sign Out
+                  登出
                 </button>
               </>
             ) : (
@@ -72,7 +72,7 @@ export default function Navbar() {
                 href="/login"
                 className="bg-pink-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-pink-700 transition-colors"
               >
-                Sign In
+                登入
               </Link>
             )}
           </div>

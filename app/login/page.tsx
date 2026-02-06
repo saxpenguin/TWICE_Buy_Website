@@ -50,12 +50,12 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-            Sign in to your account
+            登入您的帳號
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
+            或者{' '}
             <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
-              create a new account
+              註冊新帳號
             </Link>
           </p>
         </div>
@@ -63,7 +63,7 @@ export default function LoginPage() {
           <div className="-space-y-px rounded-md shadow-sm">
             <div>
               <label htmlFor="email-address" className="sr-only">
-                Email address
+                電子郵件
               </label>
               <input
                 id="email-address"
@@ -72,14 +72,14 @@ export default function LoginPage() {
                 autoComplete="email"
                 required
                 className="relative block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 px-3"
-                placeholder="Email address"
+                placeholder="電子郵件"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                密碼
               </label>
               <input
                 id="password"
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 required
                 className="relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 px-3"
-                placeholder="Password"
+                placeholder="密碼"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -97,7 +97,11 @@ export default function LoginPage() {
 
           {error && (
             <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-              {error}
+              {error === 'Invalid email or password.' ? '電子郵件或密碼錯誤。' :
+               error === 'No user found with this email.' ? '找不到此電子郵件的使用者。' :
+               error === 'Incorrect password.' ? '密碼錯誤。' :
+               error === 'Too many failed attempts. Please try again later.' ? '嘗試次數過多，請稍後再試。' :
+               '登入失敗，請重試。'}
             </div>
           )}
 
@@ -115,7 +119,7 @@ export default function LoginPage() {
                   </svg>
                 </span>
               ) : null}
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? '登入中...' : '登入'}
             </button>
           </div>
         </form>

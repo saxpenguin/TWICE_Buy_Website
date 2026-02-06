@@ -36,7 +36,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
         {product.status === 'PREORDER' && (
           <div className="absolute top-2 right-2 bg-pink-500 text-white text-xs font-bold px-2 py-1 rounded">
-            PRE-ORDER
+            預購
           </div>
         )}
       </div>
@@ -50,14 +50,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         <div className="mt-4 flex items-end justify-between">
           <div>
-            <p className="text-sm text-gray-500">Stage 1 Price</p>
+            <p className="text-sm text-gray-500">第一階段價格</p>
             <p className="text-xl font-bold text-pink-600">
               NT$ {product.price_stage1.toLocaleString()}
             </p>
           </div>
           {product.price_stage2_est && (
              <div className="text-right">
-             <p className="text-xs text-gray-400">Est. Stage 2</p>
+             <p className="text-xs text-gray-400">預估二補</p>
              <p className="text-sm text-gray-600">
                + NT$ {product.price_stage2_est.toLocaleString()}
              </p>
@@ -74,7 +74,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               : 'bg-gray-900 text-white hover:bg-gray-800'
           }`}
         >
-          {product.status === 'CLOSED' ? 'Closed' : 'Add to Cart'}
+          {product.status === 'CLOSED' ? '已截單' : '加入購物車'}
         </button>
       </div>
     </div>

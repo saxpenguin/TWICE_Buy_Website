@@ -106,20 +106,20 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">結帳</h1>
         
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
           
           {/* Checkout Form */}
           <div className="lg:col-span-7">
              <div className="bg-white shadow-md rounded-lg overflow-hidden mb-6 p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Shipping Information</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-6">收件資訊</h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Delivery Method */}
                   <div>
                     <label htmlFor="deliveryMethod" className="block text-sm font-medium text-gray-700">
-                      Delivery Method
+                      配送方式
                     </label>
                     <select
                       id="deliveryMethod"
@@ -128,15 +128,15 @@ export default function CheckoutPage() {
                       onChange={handleChange}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm py-2 px-3 border"
                     >
-                      <option value="HOME">Home Delivery (宅配)</option>
-                      <option value="CVS">Convenience Store Pickup (超商取貨)</option>
+                      <option value="HOME">宅配</option>
+                      <option value="CVS">超商取貨</option>
                     </select>
                   </div>
 
                   {/* Receiver Name */}
                   <div>
                     <label htmlFor="receiverName" className="block text-sm font-medium text-gray-700">
-                      Receiver Name
+                      收件人姓名
                     </label>
                     <input
                       type="text"
@@ -146,14 +146,14 @@ export default function CheckoutPage() {
                       value={formData.receiverName}
                       onChange={handleChange}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm py-2 px-3 border"
-                      placeholder="Full Name"
+                      placeholder="請輸入真實姓名"
                     />
                   </div>
 
                   {/* Phone */}
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                      Phone Number
+                      手機號碼
                     </label>
                     <input
                       type="tel"
@@ -170,7 +170,7 @@ export default function CheckoutPage() {
                   {/* Address */}
                   <div>
                     <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-                      {formData.deliveryMethod === 'HOME' ? 'Shipping Address' : 'Store Info (Code/Name)'}
+                      {formData.deliveryMethod === 'HOME' ? '收件地址' : '門市資訊 (店號/店名)'}
                     </label>
                     <textarea
                       name="address"
@@ -180,7 +180,7 @@ export default function CheckoutPage() {
                       value={formData.address}
                       onChange={handleChange}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm py-2 px-3 border"
-                      placeholder={formData.deliveryMethod === 'HOME' ? "123 Main St, City, Country" : "e.g. 7-11 Ximen Store (123456)"}
+                      placeholder={formData.deliveryMethod === 'HOME' ? "請輸入完整地址" : "例如: 7-11 西門門市 (123456)"}
                     />
                   </div>
                   
@@ -194,7 +194,7 @@ export default function CheckoutPage() {
                       </div>
                       <div className="ml-3">
                         <p className="text-sm text-yellow-700">
-                          Please ensure your shipping information is correct. Changes might not be possible after payment.
+                          請確認您的收件資訊是否正確。付款後可能無法更改。
                         </p>
                       </div>
                     </div>
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
                       disabled={isSubmitting}
                       className="w-full sm:w-auto bg-pink-600 border border-transparent rounded-md shadow-sm py-3 px-6 text-base font-medium text-white hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isSubmitting ? 'Processing...' : 'Place Order'}
+                      {isSubmitting ? '處理中...' : '送出訂單'}
                     </button>
                   </div>
 
@@ -217,7 +217,7 @@ export default function CheckoutPage() {
           {/* Order Summary */}
           <div className="lg:col-span-5 mt-8 lg:mt-0">
             <div className="bg-white shadow-md rounded-lg overflow-hidden p-6 sticky top-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">訂單摘要</h2>
               
               <ul className="divide-y divide-gray-200 mb-6 max-h-80 overflow-y-auto">
                 {items.map((item) => (
@@ -233,7 +233,7 @@ export default function CheckoutPage() {
                               />
                            </div>
                         ) : (
-                          <div className="h-full w-full bg-gray-100 flex items-center justify-center text-xs text-gray-400">No Img</div>
+                          <div className="h-full w-full bg-gray-100 flex items-center justify-center text-xs text-gray-400">無圖片</div>
                         )}
                      </div>
                      <div className="ml-4 flex-1 flex flex-col">
@@ -244,7 +244,7 @@ export default function CheckoutPage() {
                           </div>
                         </div>
                         <div className="flex-1 flex items-end justify-between text-sm">
-                          <p className="text-gray-500">Qty {item.quantity}</p>
+                          <p className="text-gray-500">數量 {item.quantity}</p>
                         </div>
                      </div>
                   </li>
@@ -253,28 +253,28 @@ export default function CheckoutPage() {
 
               <dl className="space-y-4 border-t border-gray-200 pt-6">
                 <div className="flex items-center justify-between">
-                  <dt className="text-sm text-gray-600">Subtotal (Stage 1)</dt>
+                  <dt className="text-sm text-gray-600">小計 (第一階段)</dt>
                   <dd className="text-sm font-medium text-gray-900">NT$ {totalPriceStage1.toLocaleString()}</dd>
                 </div>
                 
                  <div className="flex items-center justify-between">
-                  <dt className="text-sm text-gray-600">Items</dt>
+                  <dt className="text-sm text-gray-600">商品數量</dt>
                   <dd className="text-sm font-medium text-gray-900">{totalItems}</dd>
                 </div>
 
                 <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
-                  <dt className="text-base font-bold text-gray-900">Total Due (Stage 1)</dt>
+                  <dt className="text-base font-bold text-gray-900">應付總額 (第一階段)</dt>
                   <dd className="text-xl font-bold text-pink-600">NT$ {totalPriceStage1.toLocaleString()}</dd>
                 </div>
               </dl>
               
               <div className="mt-4 text-xs text-gray-500">
-                 * You are paying for the product cost only. Shipping fees (Stage 2) will be calculated and charged when items arrive at our warehouse.
+                 * 您目前僅需支付商品費用。運費 (第二階段) 將在商品抵達倉庫後計算並收取。
               </div>
 
                <div className="mt-6 text-center">
                  <Link href="/cart" className="text-sm font-medium text-pink-600 hover:text-pink-500">
-                   Return to Cart
+                   返回購物車
                  </Link>
                </div>
             </div>

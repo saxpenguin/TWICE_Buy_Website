@@ -52,16 +52,16 @@ export default async function ProductsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            All Merchandise
+            所有商品
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Browse our latest collection of TWICE goodies.
+            瀏覽我們最新的 TWICE 周邊商品系列。
           </p>
         </div>
 
         {products.length === 0 ? (
            <div className="text-center py-12">
-             <p className="text-gray-500 text-lg">No products found.</p>
+             <p className="text-gray-500 text-lg">目前沒有商品。</p>
            </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
