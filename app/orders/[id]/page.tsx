@@ -95,7 +95,8 @@ export default function OrderDetailsPage() {
       
       // 2. Call Function
       const result = await createPaymentRequest({
-        orderId: order?.id
+        orderId: order?.id,
+        stage: 1
       });
       
       const data = result.data as any;

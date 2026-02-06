@@ -106,10 +106,10 @@ export const createPaymentRequest = onCall({ cors: true }, async (request) => {
     throw new HttpsError('unauthenticated', 'User must be authenticated');
   }
 
-  const { orderId } = request.data; // stage removed
+  const { orderId, stage } = request.data;
 
-  if (!orderId) {
-    throw new HttpsError('invalid-argument', 'Missing orderId');
+  if (!orderId || !stage) {
+    throw new HttpsError('invalid-argument', 'Missing orderId or stage');
   }
 
   const orderRef = admin.firestore().collection('orders').doc(orderId);
