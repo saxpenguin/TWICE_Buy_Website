@@ -31,7 +31,7 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
 - [X] **Task 2.2:** Product List Dashboard (`app/admin/products/page.tsx`)
     - Table view of all products (including CLOSED).
     - Actions: Delete, Toggle Status.
-- [ ] **Task 2.3:** Add Product Form (`app/admin/products/add/page.tsx`)
+- [X] **Task 2.3:** Add Product Form (`app/admin/products/add/page.tsx`)
     - Form for Name, Description, Price (Stage 1), Image URL, Stock.
 - [ ] **Task 2.4:** Admin Order Management
     - Create Admin Order View to update status (e.g., mark as Arrived at Warehouse).
