@@ -66,6 +66,16 @@ export default function Footer() {
                   我的訂單
                 </Link>
               </li>
+              <li>
+                <Link href="/terms" className="text-base text-gray-300 hover:text-white">
+                  服務條款
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="text-base text-gray-300 hover:text-white">
+                  常見問題
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

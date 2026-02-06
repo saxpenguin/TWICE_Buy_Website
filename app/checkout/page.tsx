@@ -77,7 +77,10 @@ export default function CheckoutPage() {
       // 3. Redirect to Payment (or Success page for now)
       // Since payment gateway isn't integrated yet, we go to an order success/details page
       // Ideally: router.push(`/payment/${orderId}`);
-      router.push(`/orders/${orderId}`);
+      // router.push(`/orders/${orderId}`);
+
+      // Auto redirect to order details for immediate payment
+      window.location.href = `/orders/${orderId}`;
       
     } catch (error) {
       console.error('Failed to create order:', error);

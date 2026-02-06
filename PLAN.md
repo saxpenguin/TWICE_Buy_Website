@@ -87,7 +87,7 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
 
 
 ## Enhancements (Medium Priority)
-- [ ] **[notify-1]** Set up Email trigger (SendGrid or Firebase Email Extension) for "Order Confirmed"
-- [ ] **[notify-2]** Set up Email notification for "Stage 2 Payment Required" (Arrival notification)
-- [ ] **[static-1]** Create "Terms of Service" & "FAQ" pages (Must cover: refund policy, shipping risks)
+- [X] **[notify-1]** Set up Email trigger (Nodemailer) for "Order Confirmed"
+- [X] **[notify-2]** Set up Email notification for "Stage 2 Payment Required" & "Shipped" status
+- [X] **[static-1]** Create "Terms of Service" & "FAQ" pages (Must cover: refund policy, shipping risks)
 - [ ] **[backend-1]** Enhance Cloud Functions for secure payment processing (integration placeholder)

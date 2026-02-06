@@ -1,8 +1,48 @@
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 import * as crypto from 'crypto';
+import * as nodemailer from 'nodemailer';
 
 admin.initializeApp();
+
+// Email Configuration
+// IMPORTANT: Set these environment variables in Firebase:
+// firebase functions:secrets:set EMAIL_USER="your-email@gmail.com"
+// firebase functions:secrets:set EMAIL_PASS="your-app-password"
+const emailUser = process.env.EMAIL_USER || "test@example.com"; 
+const emailPass = process.env.EMAIL_PASS || "password";
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: emailUser,
+    pass: emailPass,
+  },
+});
+
+async function sendOrderEmail(to: string, subject: string, html: string) {
+  if (!to) return;
+  
+  // Skip sending if we are using the default test values
+  if (emailUser === "test@example.com") {
+    console.log(`[Mock Email] To: ${to}, Subject: ${subject}`);
+    return;
+  }
+  
+  const mailOptions = {
+    from: `"PingPing Shop" <${emailUser}>`,
+    to: to,
+    subject: subject,
+    html: html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Email sent to ${to}: ${subject}`);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
 
 // ECPay Test Environment Credentials
 const ECPAY_CONFIG = {
@@ -54,9 +94,7 @@ function calculateCheckMacValue(params: any): string {
  * Creates a payment request for an order.
  * This function integrates with the payment gateway (ECPay placeholder).
  */
-export const createPaymentRequest = functions.https.onCall({ cors: true }, async (req: functions.https.CallableRequest<any>) => {
-  const data = req.data;
-  const context = req;
+export const createPaymentRequest = functions.https.onCall(async (data, context) => {
 
   // 1. Authentication Check
   if (!context.auth) {
@@ -146,6 +184,82 @@ export const createPaymentRequest = functions.https.onCall({ cors: true }, async
 });
 
 /**
+ * Trigger: When an order is created, send a confirmation email.
+ */
+export const onOrderCreated = functions.firestore
+  .document('orders/{orderId}')
+  .onCreate(async (snapshot: functions.firestore.QueryDocumentSnapshot, context: functions.EventContext) => {
+    const order = snapshot.data();
+    const orderId = context.params.orderId;
+    const email = order.userEmail;
+
+
+    if (!email) {
+      console.log('No email found for order', orderId);
+      return;
+    }
+
+    const subject = `Order Confirmation: ${orderId}`;
+    const body = `
+      <h1>Order Received!</h1>
+      <p>Thank you for your order with PingPing Shop.</p>
+      <p><strong>Order ID:</strong> ${orderId}</p>
+      <p><strong>Status:</strong> Pending Stage 1 Payment</p>
+      <p>Please log in to your account to complete the Stage 1 payment so we can secure your items.</p>
+      <a href="https://pingping-goods.com/orders/${orderId}">View Order</a>
+    `;
+
+    return sendOrderEmail(email, subject, body);
+  });
+
+/**
+ * Trigger: When order status changes to PENDING_PAYMENT_2 (Shipping Fee Calculated), notify user.
+ */
+export const onOrderStatusChange = functions.firestore
+  .document('orders/{orderId}')
+  .onUpdate(async (change: functions.Change<functions.firestore.QueryDocumentSnapshot>, context: functions.EventContext) => {
+    const newData = change.after.data();
+    const oldData = change.before.data();
+    const orderId = context.params.orderId;
+    const email = newData.userEmail;
+
+
+    // Check if status changed to PENDING_PAYMENT_2
+    if (oldData.status !== 'PENDING_PAYMENT_2' && newData.status === 'PENDING_PAYMENT_2') {
+       if (!email) return;
+
+       const subject = `Action Required: Shipping Payment for Order ${orderId}`;
+       const body = `
+         <h1>Items Arrived at Warehouse</h1>
+         <p>Good news! Your items for Order <strong>${orderId}</strong> have arrived at our warehouse.</p>
+         <p>The international and domestic shipping fees have been calculated.</p>
+         <p><strong>Total Shipping (Stage 2):</strong> $${newData.total_stage2}</p>
+         <p>Please log in to pay the shipping fee so we can dispatch your package.</p>
+         <a href="https://pingping-goods.com/orders/${orderId}">Pay Shipping Now</a>
+       `;
+       
+       return sendOrderEmail(email, subject, body);
+    }
+    
+    // Check if status changed to SHIPPED
+    if (oldData.status !== 'SHIPPED' && newData.status === 'SHIPPED') {
+        if (!email) return;
+ 
+        const subject = `Order Shipped: ${orderId}`;
+        const body = `
+          <h1>Your Order is on the Way!</h1>
+          <p>Order <strong>${orderId}</strong> has been shipped.</p>
+          ${newData.trackingNumber ? `<p><strong>Tracking Number:</strong> ${newData.trackingNumber}</p>` : ''}
+          <p>Thank you for shopping with PingPing Shop!</p>
+        `;
+        
+        return sendOrderEmail(email, subject, body);
+     }
+
+    return null;
+  });
+
+/**
  * Payment Callback (Webhook)
  * Handles the server-to-server notification from the payment gateway.
  */
@@ -195,6 +309,44 @@ export const paymentCallback = functions.https.onRequest(async (req, res) => {
 
       await orderRef.update(updateData);
       console.log(`Payment successful for Order ${orderId} Stage ${stage}`);
+
+      // Send Email Notification
+      try {
+
+        // Actually, let's fetch the fresh order to get the user email stored on the order or the user ID
+        const freshOrderDoc = await orderRef.get();
+        const freshOrderData = freshOrderDoc.data();
+        const email = freshOrderData?.userEmail; 
+
+        if (email) {
+           let subject = '';
+           let body = '';
+
+           if (stage === '1') {
+             subject = `Payment Received: Order ${orderId} (Stage 1)`;
+             body = `
+               <h1>Payment Received</h1>
+               <p>Thank you! We have received your payment for the product cost (Stage 1).</p>
+               <p><strong>Order ID:</strong> ${orderId}</p>
+               <p>We will now purchase your items. You will be notified when they arrive at our warehouse for the Stage 2 shipping payment.</p>
+             `;
+           } else if (stage === '2') {
+             subject = `Payment Received: Order ${orderId} (Stage 2)`;
+             body = `
+               <h1>Shipping Payment Received</h1>
+               <p>Thank you! We have received your payment for shipping (Stage 2).</p>
+               <p><strong>Order ID:</strong> ${orderId}</p>
+               <p>Your items will be shipped shortly!</p>
+             `;
+           }
+           
+           await sendOrderEmail(email, subject, body);
+        }
+
+      } catch (emailErr) {
+        console.error('Failed to send payment confirmation email:', emailErr);
+        // Do not fail the request just because email failed
+      }
       
       res.status(200).send('1|OK'); 
     } catch (error) {
