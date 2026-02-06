@@ -63,8 +63,7 @@ Based on the project status analysis (Feb 2026), this plan outlines the immediat
     - Create a "Pending" order in Firestore with a unique `MerchantTradeNo`.
 
 - [X] **Task 3.2:** Payment Callback / Webhook
-    - Create an `onRequest` (HTTPS) trigger for `ReturnURL` (server-to-server).
-    - **Security:** Re-calculate and verify incoming `CheckMacValue` from ECPay.
+    - Create an `onRequest` (HTTPS) trigger for `ReturnURL` (server-to-server).    - **Configuration:** Add rewrite in `firebase.json` map `/api/payments/ecpay-callback` to `handleEcpayWebhook`.    - **Security:** Re-calculate and verify incoming `CheckMacValue` from ECPay.
     - **Idempotency:** Check if order is already `PAID_PAYMENT_1` before processing.
     - **Atomicity:** Use a Firestore Transaction to update order status.
     - Return `1|OK` to ECPay to acknowledge receipt.

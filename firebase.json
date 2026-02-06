@@ -28,7 +28,13 @@
     ],
     "frameworksBackend": {
       "region": "asia-east1"
-    }
+    },
+    "rewrites": [
+      {
+        "source": "/api/payments/ecpay-callback",
+        "function": "handleEcpayWebhook"
+      }
+    ]
   },
   "storage": {
     "rules": "storage.rules"
