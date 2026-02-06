@@ -1,4 +1,5 @@
 import * as functions from 'firebase-functions/v1';
+import { onCall, onRequest, HttpsError } from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
 import * as crypto from 'crypto';
 import * as nodemailer from 'nodemailer';
@@ -98,31 +99,31 @@ function calculateCheckMacValue(params: any): string {
  * Creates a payment request for an order.
  * This function integrates with the payment gateway (ECPay placeholder).
  */
-export const createPaymentRequest = functions.https.onCall(async (data, context) => {
+export const createPaymentRequest = onCall({ cors: true }, async (request) => {
 
   // 1. Authentication Check
-  if (!context.auth) {
-    throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
+  if (!request.auth) {
+    throw new HttpsError('unauthenticated', 'User must be authenticated');
   }
 
-  const { orderId } = data; // stage removed
+  const { orderId } = request.data; // stage removed
 
   if (!orderId) {
-    throw new functions.https.HttpsError('invalid-argument', 'Missing orderId');
+    throw new HttpsError('invalid-argument', 'Missing orderId');
   }
 
   const orderRef = admin.firestore().collection('orders').doc(orderId);
   const orderDoc = await orderRef.get();
 
   if (!orderDoc.exists) {
-    throw new functions.https.HttpsError('not-found', 'Order not found');
+    throw new HttpsError('not-found', 'Order not found');
   }
 
   const order = orderDoc.data();
   
   // Security Check: Ensure user owns the order
-  if (order?.userId !== context.auth.uid) {
-    throw new functions.https.HttpsError('permission-denied', 'Not authorized to pay for this order');
+  if (order?.userId !== request.auth.uid) {
+    throw new HttpsError('permission-denied', 'Not authorized to pay for this order');
   }
 
   // 2. Calculate Amount
@@ -130,7 +131,7 @@ export const createPaymentRequest = functions.https.onCall(async (data, context)
   let itemName = '';
   
   if (order?.isPaid) {
-    throw new functions.https.HttpsError('failed-precondition', 'Order already paid');
+    throw new HttpsError('failed-precondition', 'Order already paid');
   }
   amount = order?.totalAmount;
   itemName = `PingPing Shop - Order ${orderId.slice(0, 8)}`;
@@ -238,7 +239,7 @@ export const onOrderStatusChange = functions.firestore
  * Payment Callback (Webhook)
  * Handles the server-to-server notification from the payment gateway.
  */
-export const paymentCallback = functions.https.onRequest(async (req, res) => {
+export const paymentCallback = onRequest(async (req, res) => {
   if (req.method !== 'POST') {
     res.status(405).send('Method Not Allowed');
     return;
